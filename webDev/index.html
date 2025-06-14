@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Grayscale - Start Bootstrap Theme</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="js/2010_Census_Blocks.js"></script>
+        <script src="js/Street_ROW_Trees.js"></script>
+        <script src="js/classification_datasets.js"></script>
+        <script src="js/merged_pasadena.js"></script>
+        <script src="js/census_blocks_with_density.js"></script>
+        <link href="css/greencity.css" rel="stylesheet" />
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>  
+    <script src="https://unpkg.com/leaflet-path-drag"></script>
+    <script src="https://unpkg.com/leaflet-editable@1.2.0/src/Leaflet.Editable.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script> 
+
+     <!--link href="css/leaflet.css" rel="stylesheet" /-->
+        <!--script src="js/leaflet.js"></script-->
+
+        <!--link href="css/map.css" rel="stylesheet" /-->
+          <style>
+            /*#map { height: 800px; width: 100%; }*/
+        </style>  
+        
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+
+                <a class="navbar-brand" href="#page-top">Green City</a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#app">App</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#signup">Contact</a></li>
+                    </ul>
+                </div>
+
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <div class="text-center">
+                        <h1 class="mx-auto my-0 text-uppercase">GreenCity</h1>
+                        <h2 class="text-white-50 mx-auto mt-2 mb-5">Urban Tree Canopy Monitor</h2>
+                        <a class="btn btn-primary" href="#about">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- About-->
+        <section class="about-section text-center" id="about">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-8">
+                        <h2 class="text-white mb-4">Built with Bootstrap 5</h2>
+                        <p class="text-white-50">
+                            Grayscale is a free Bootstrap theme created by Start Bootstrap. It can be yours right now, simply download the template on
+                            <a href="https://startbootstrap.com/theme/grayscale/">the preview page.</a>
+                            The theme is open source, and you can use it for any purpose, personal or commercial.
+                        </p>
+                    </div>
+                </div>
+                <img class="img-fluid" src="assets/img/ipad.png" alt="..." />
+            </div>
+        </section>
+        <!-- Projects-->
+        
+
+        <section class=" bg-light" id="app">
+            <!-- Featured app Row-->
+            <div class="row align-items-center">
+                <!--script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9wiYG45-0v1zrtcrU6djYgymkaBRTIis&callback=initMap" defer></script-->
+                
+                
+                <div class="featured-text text-center text-lg-left">
+
+                    <div id="map" style="width: 100%; height: 640px;">
+                        <div id="sidebar">
+                             <div class="sidebarmenu">Tree Detection Model</div>
+                             <label><input type="radio" name="model" value="baseline" checked > Baseline</label>
+                            <label><input type="radio" name="model" value="deepforest" >  Deep Forest</label>
+                             
+                                <hr>
+                             <div class="sidebarmenu">Area Selection</div>
+                             <label><input type="radio" name="tool" value="blocks" > Census Blocks</label>
+                            <label><input type="radio" name="tool" value="rectangle" checked > 100 Acre Box</label>
+                            <label><input type="radio" name="tool" value="street" checked > Street View</label>
+                            
+                                <hr>
+
+                             <div class="sidebarmenu">Map View</div>
+                            <label><input type="radio" name="mapView" value="satellite" checked> Satellite</label>
+                            <label><input type="radio" name="mapView" value="streets"> Streets</label>
+                            <label><input type="radio" name="mapView" value="terrain"> Terrain</label>
+                        </div>
+                        <div id="infoBox">Area: calculating...</div>
+                        <div id="legend"></div>
+
+                    </div>
+
+<script language="javascript">
+
+               
+
+const map = L.map("map", {
+        center: [34.156113, -118.131943],
+        zoom: 13,
+        editable: true, // Required for Leaflet.Editable
+    });
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    minZoom: 12,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+let selectionRect = null;     
+const infoBox = document.getElementById('infoBox');
+boxInfo = {}
+
+function updateInfoBox(feature, selectedPoints) {
+    const areaSqMeters = turf.area(feature);  // Turf requires GeoJSON Feature
+    const areaAcres = areaSqMeters / 4046.8564224;
+    const hectare = areaAcres / 2.47105 
+    const pointCount = selectedPoints.features.filter(f => f.geometry.type === "Point").length;
+
+    //const hectares = acres * 0.404686;
+    const density = pointCount / hectare;
+
+    htmlOut = `<div>Area: ${areaAcres.toFixed(0)} Acre</div>`;
+    htmlOut += `<div>Trees: ${pointCount}</div>`;
+    htmlOut += `<div>Density: ${density.toFixed(0)}</div>`;
+    htmlOut += `<div>Benefits: ...</div>`;
+    infoBox.innerHTML = htmlOut;
+//How Much CO2 Does A Tree Absorb?
+        //average value of 10 kilograms/22 pounds per tree per year
+    //https://onetreeplanted.org/blogs/stories/how-much-co2-does-tree-absorb?utm_source=chatgpt.com
+
+    /*
+    Tree Density
+    City trees per hectare
+    https://wfpquantum.s3.amazonaws.com/pdf/2021/63937_State%20of%20the%20Urban%20Forest%20April%202021.pdf?utm_source=chatgpt.com
+    
+    City trees per hectare
+    < 25; 26–50; 51-75; 76-100; >100
+    */
+    
+    /*
+    Air Quality
+    AQI
+    https://en.wikipedia.org/wiki/Air_quality_index?utm_source=chatgpt.com
+    i‑Tree Eco estimates pollutant removal (PM₂.₅, NO₂, O₃, SO₂, CO), expressed in grams per m² of canopy or kg per hectare per year, using local weather and air data
+    
+    1 urban tree removes on average:
+    0.015 kg (15 g) PM₂.₅ per year
+    One hectare of U.S.
+    urban tree cover averages about 67 kg of pollution removal per year (Nowak
+    et al. 2014)
+    */
+}
+
+
+
+function getDensityColor(d) {
+  return d > 25  ? '#0d3614' :
+         d > 20  ? '#0c4d17' :
+         d > 15  ? '#177828' :
+         d > 10  ? '#198a2c' :
+         d > 5   ? '#1ba620' :
+         d > 1   ? '#67a61b' :
+         d > 0   ? '#b9c215' :
+                   '#c98422';
+}
+
+function addLegend() {
+  const legend = document.getElementById('legend');
+  const grades = [0, 1, 5, 10, 15, 20, 25];
+
+  let html = `<strong>Tree Density<br>(trees/ha)</strong><br>`;
+  for (let i = grades.length - 1; i >= 0; i--) {
+    const from = grades[i];
+    const to = grades[i + 1];
+    const label = to ? `${from}–${to}` : `> ${from}`;
+    html += `
+      <div>
+        <span style="background:${getDensityColor(from)}"></span>${label}
+      </div>`;
+  }
+
+  legend.innerHTML = html;
+}
+
+addLegend();
+
+
+function interpolateColor(color1, color2, factor) {
+    const c1 = parseInt(color1.slice(1), 16);
+    const c2 = parseInt(color2.slice(1), 16);
+
+    const r1 = (c1 >> 16) & 0xff, g1 = (c1 >> 8) & 0xff, b1 = c1 & 0xff;
+    const r2 = (c2 >> 16) & 0xff, g2 = (c2 >> 8) & 0xff, b2 = c2 & 0xff;
+
+    const r = Math.round(r1 + factor * (r2 - r1));
+    const g = Math.round(g1 + factor * (g2 - g1));
+    const b = Math.round(b1 + factor * (b2 - b1));
+
+    return `rgb(${r}, ${g}, ${b})`;
+}
+/*
+function ShapeOptions(feature) {
+    return {
+        fillColor: 'brown',
+        weight: 1,
+        opacity: 1,
+        color: 'white',
+        //dashArray: '3',
+        fillOpacity: 0.3
+    };
+}
+*/
+const treePoints = street_row_trees
+
+/*
+census_blocks.features.forEach(feature => {
+  const areaSqM = turf.area(feature);
+
+  // Get all trees within this polygon using Turf's spatial indexing
+  const selected = turf.pointsWithinPolygon(treePoints, feature);
+  const treeCount = selected.features.length;
+
+  feature.properties.areaSqM = areaSqM;
+  feature.properties.treeCount = treeCount;
+  feature.properties.density = (treeCount / areaSqM) * 10000; // per hectare
+});
+*/
+
+function ShapeOptions(feature) {
+  const density = feature.properties.density || 0; // if already computed
+  //alert(density);
+  return {
+    
+    fillColor: getDensityColor(density),
+    weight: 1,
+    color: "#777",
+    fillOpacity: 0.7
+  };
+}
+
+
+function createCircleMarker(feature, latlng) {
+    return L.circleMarker(latlng, {
+        radius: 2,
+        fillColor: "#0d4a09",
+        color: "#50817e",
+        weight: 0.5,
+        opacity: 1,
+        fillOpacity: 0.8
+    //}).bindPopup(`Point2: ${feature.properties.extended_Trunk_Diameter}`);
+    });
+    
+}
+//const pointLayer = L.geoJSON(street_row_trees, {
+//const pointLayer = L.geoJSON(merged_tree, {
+
+
+const pointLayer = L.geoJSON(treePoints, {
+    createCircleMarker, 
+    onEachFeature: (feature, layer) => {
+        const diameter = feature?.properties?.extended_Trunk_Diameter;
+        //layer.bindPopup(`Point: ${feature.properties}`);
+    }
+});
+                     
+function removeCircleMarker(){
+    map.eachLayer(function (l) {
+        if (l instanceof L.CircleMarker) {
+            map.removeLayer(l);
+        }
+    });
+
+}
+
+const polygonLayer = L.geoJSON(censusBlocksTreeDensity, {
+  style: ShapeOptions, // heatmap style function — do NOT change it
+  onEachFeature: (feature, layer) => {
+    layer.on('click', function () {
+      if (!selectionRect) {
+        removeCircleMarker();
+
+        // Filter treePoints inside this polygon
+        const selectedPoints = {
+          type: "FeatureCollection",
+          features: treePoints.features.filter((pt) =>
+            turf.booleanPointInPolygon(pt, feature)
+          )
+        };
+
+        // Use precomputed properties
+        const areaSqMeters = feature.properties.areaSqM;
+        const pointCount = feature.properties.treeCount;
+        const densityPerHectare = feature.properties.density;
+        const areaAcres = areaSqMeters * 0.000247105;
+
+        // Update info box — just showing data
+        const html = `
+          <b>Area:</b> ${areaAcres.toFixed(2)} acres<br>
+          <b>Trees:</b> ${pointCount}<br>
+          <b>Density:</b> ${densityPerHectare.toFixed(2)} trees/ha
+        `;
+        infoBox.innerHTML = html;
+
+        // Add points inside this polygon
+        L.geoJSON(selectedPoints, {
+          pointToLayer: createCircleMarker
+        }).addTo(map);
+      }
+    });
+  }
+}).addTo(map);
+
+
+function updateVisiblePoints() {
+    if (selectionRect){
+        const rectBounds = selectionRect.getBounds();
+        const turfPoly = turf.polygon([[
+        [rectBounds.getWest(), rectBounds.getSouth()],
+        [rectBounds.getEast(), rectBounds.getSouth()],
+        [rectBounds.getEast(), rectBounds.getNorth()],
+        [rectBounds.getWest(), rectBounds.getNorth()],
+        [rectBounds.getWest(), rectBounds.getSouth()]
+        ]]);
+
+        const selectedPoints = {
+        type: "FeatureCollection",
+        features: treePoints.features.filter((pt) =>
+            turf.booleanPointInPolygon(pt, turfPoly)
+        )
+        };
+        
+        insidePointsLayer.clearLayers();
+        insidePointsLayer.addData(selectedPoints);
+
+        const center = rectBounds.getCenter();
+        //selectionRect.bindPopup(`Area: ${acres.toFixed(2)} acres`).openPopup(center);
+        updateInfoBox(turfPoly, selectedPoints);
+    }
+}
+
+const MAX_WIDTH = 0.02;  // degrees
+const MAX_HEIGHT = 0.02; // degrees
+
+function limitRectangleSize(e) {
+  const bounds = selectionRect.getBounds();
+  const width = Math.abs(bounds.getEast() - bounds.getWest());
+  const height = Math.abs(bounds.getNorth() - bounds.getSouth());
+
+  if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+    // Revert to previous allowed bounds
+    selectionRect.setBounds(previousValidBounds);
+  } else {
+    previousValidBounds = bounds; // Update valid bounds
+  }
+
+  updateVisiblePoints(); // Still update filtered points
+}
+
+let toolon = null;
+
+function genRec(center) {
+    const offsetLat = 0.00286;  // ≈ 317 meters
+    const offsetLng = 0.00345;  // ≈ 317 meters
+
+    const bounds = L.latLngBounds(
+        [center.lat - offsetLat, center.lng - offsetLng],
+        [center.lat + offsetLat, center.lng + offsetLng]
+    );
+
+    // Update existing rectangle
+    if (selectionRect) {
+        selectionRect.setBounds(bounds);
+    } else {
+        selectionRect = L.rectangle(bounds, {
+            color: 'blue',
+            weight: 2,
+            fillOpacity: 0.2,
+            draggable: true
+        }).addTo(map);
+
+        selectionRect.dragging.enable();
+        selectionRect.on('dragend', () => {updateVisiblePoints();});
+        selectionRect.on("editable:dragend", updateVisiblePoints);
+
+        // Minimal fallback:
+        map.on("zoomend", updateVisiblePoints); // Update on zoom if dragging isn't available
+    }
+}
+
+function handleToolChange(tool) {
+    removeCircleMarker();
+
+    // Remove existing rectangle
+    if (selectionRect) {
+        map.removeLayer(selectionRect);
+        selectionRect = null;
+    }
+
+    // Remove old click handler
+    map.off("click");
+
+    if (tool === 'blocks') {
+            toolon = 'blocks';
+            const center = [34.156113, -118.131943];
+            map.zoomControl.enable();
+            map.setView(center, 13);
+    } 
+    else if (tool === 'rectangle') {
+        toolon = 'rectangle';
+        map.setZoom(15);
+        map.zoomControl.disable();
+
+        const center = map.getCenter();
+        genRec(center);
+        updateVisiblePoints();
+
+        map.on("zoomend", updateVisiblePoints);
+
+        map.on("click", (e) => {
+        // Note: you can also check `toolon` here
+        if (tool === "rectangle") {
+            const center = e.latlng;
+            genRec(center);
+            updateVisiblePoints();  
+        }
+        });
+    }
+}
+
+const insidePointsLayer = L.geoJSON(null, {
+    pointToLayer: createCircleMarker
+}).addTo(map);
+
+
+// Automatically toggle when radio button changes
+document.querySelectorAll('input[name="tool"]').forEach(input => {
+input.addEventListener('change', (e) => {
+        handleToolChange(e.target.value);
+    });
+});
+
+// Trigger default on load
+handleToolChange(document.querySelector('input[name="tool"]:checked').value);
+                    
+                       
+                    </script>   
+
+
+                </div>
+            </div>        
+
+        </section>
+        <!-- Map-->
+        <section class="projects-section bg-light" id="projects">
+            <div class="container px-4 px-lg-5">
+                <!-- Featured Project Row-->
+                <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
+                    <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/bg-masthead.jpg" alt="..." /></div>
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="featured-text text-center text-lg-left">
+                            <h4>Shoreline</h4>
+                            <p class="text-black-50 mb-0">Grayscale is open source and MIT licensed. This means you can use it for any project - even commercial projects! Download it, customize it, and publish your website!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project One Row-->
+                <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
+                    <div class="col-lg-6"><img class="img-fluid" src="assets/img/demo-image-01.jpg" alt="..." /></div>
+                    <div class="col-lg-6">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-left">
+                                    <h4 class="text-white">Misty</h4>
+                                    <p class="mb-0 text-white-50">An example of where you can put an image of a project, or anything else, along with a description.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Project Two Row-->
+                <div class="row gx-0 justify-content-center">
+                    <div class="col-lg-6"><img class="img-fluid" src="assets/img/demo-image-02.jpg" alt="..." /></div>
+                    <div class="col-lg-6 order-lg-first">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-right">
+                                    <h4 class="text-white">Mountains</h4>
+                                    <p class="mb-0 text-white-50">Another example of a project with its respective description. These sections work well responsively as well!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Signup-->
+        <section class="signup-section" id="signup">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5">
+                    <div class="col-md-10 col-lg-8 mx-auto text-center">
+                        <i class="far fa-paper-plane fa-2x mb-2 text-white"></i>
+                        <h2 class="text-white mb-5">Subscribe to receive updates!</h2>
+                        <!-- * * * * * * * * * * * * * * *-->
+                        <!-- * * SB Forms Contact Form * *-->
+                        <!-- * * * * * * * * * * * * * * *-->
+                        <!-- This form is pre-integrated with SB Forms.-->
+                        <!-- To make this form functional, sign up at-->
+                        <!-- https://startbootstrap.com/solution/contact-forms-->
+                        <!-- to get an API token!-->
+                        <form class="form-signup" id="contactForm" data-sb-form-api-token="API_TOKEN">
+                            <!-- Email address input-->
+                            <div class="row input-group-newsletter">
+                                <div class="col"><input class="form-control" id="emailAddress" type="email" placeholder="Enter email address..." aria-label="Enter email address..." data-sb-validations="required,email" /></div>
+                                <div class="col-auto"><button class="btn btn-primary disabled" id="submitButton" type="submit">Notify Me!</button></div>
+                            </div>
+                            <div class="invalid-feedback mt-2" data-sb-feedback="emailAddress:required">An email is required.</div>
+                            <div class="invalid-feedback mt-2" data-sb-feedback="emailAddress:email">Email is not valid.</div>
+                            <!-- Submit success message-->
+                            <!---->
+                            <!-- This is what your users will see when the form-->
+                            <!-- has successfully submitted-->
+                            <div class="d-none" id="submitSuccessMessage">
+                                <div class="text-center mb-3 mt-2 text-white">
+                                    <div class="fw-bolder">Form submission successful!</div>
+                                    To activate this form, sign up at
+                                    <br />
+                                    <a href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
+                                </div>
+                            </div>
+                            <!-- Submit error message-->
+                            <!---->
+                            <!-- This is what your users will see when there is-->
+                            <!-- an error submitting the form-->
+                            <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3 mt-2">Error sending message!</div></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Contact-->
+        <section class="contact-section bg-black">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="card py-4 h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-map-marked-alt text-primary mb-2"></i>
+                                <h4 class="text-uppercase m-0">Address</h4>
+                                <hr class="my-4 mx-auto" />
+                                <div class="small text-black-50">4923 Market Street, Orlando FL</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="card py-4 h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-envelope text-primary mb-2"></i>
+                                <h4 class="text-uppercase m-0">Email</h4>
+                                <hr class="my-4 mx-auto" />
+                                <div class="small text-black-50"><a href="#!">hello@yourdomain.com</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="card py-4 h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-mobile-alt text-primary mb-2"></i>
+                                <h4 class="text-uppercase m-0">Phone</h4>
+                                <hr class="my-4 mx-auto" />
+                                <div class="small text-black-50">+1 (555) 902-8832</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="social d-flex justify-content-center">
+                    <a class="mx-2" href="#!"><i class="fab fa-twitter"></i></a>
+                    <a class="mx-2" href="#!"><i class="fab fa-facebook-f"></i></a>
+                    <a class="mx-2" href="#!"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Copyright &copy; Your Website 2023</div></footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- * *                               SB Forms JS                               * *-->
+        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    </body>
+</html>
