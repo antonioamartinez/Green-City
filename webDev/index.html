@@ -14,7 +14,7 @@
         <script src="js/Street_ROW_Trees.js"></script>
         <script src="js/classification_datasets.js"></script>
         <script src="js/merged_pasadena.js"></script>
-        <script src="js/census_blocks_with_density.js"></script>
+        <script src="js/census_merged.js"></script>
         <link href="css/greencity.css" rel="stylesheet" />
         <!-- Google fonts-->
         <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
@@ -103,14 +103,15 @@
                     <div id="map" style="width: 100%; height: 640px;">
                         <div id="sidebar">
                              <div class="sidebarmenu">Tree Detection Model</div>
-                             <label><input type="radio" name="model" value="baseline" checked > Baseline</label>
+                             <label><input type="radio" name="model" value="training" checked > Training Set</label>
+                             <label><input type="radio" name="model" value="baseline" > Baseline</label>
                             <label><input type="radio" name="model" value="deepforest" >  Deep Forest</label>
                              
                                 <hr>
                              <div class="sidebarmenu">Area Selection</div>
-                             <label><input type="radio" name="tool" value="blocks" > Census Blocks</label>
-                            <label><input type="radio" name="tool" value="rectangle" checked > 100 Acre Box</label>
-                            <label><input type="radio" name="tool" value="street" checked > Street View</label>
+                             <label><input type="radio" name="tool" value="blocks" checked> Census Blocks</label>
+                            <label><input type="radio" name="tool" value="rectangle" > 100 Acre Box</label>
+                            <label><input type="radio" name="tool" value="street" > Street View</label>
                             
                                 <hr>
 
@@ -126,18 +127,59 @@
 
 <script language="javascript">
 
-               
+// Get map view and map view selection
+const baseLayers = {
+  satellite: L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+      attribution: 'Tiles © Esri',
+      maxZoom: 19 
+    }
+  ),
+  streets: L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19 
+    }
+  ),
+  terrain: L.tileLayer(
+    "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+      attribution: '© OpenTopoMap contributors',
+      maxZoom: 17 // 👈 prevent requests to non-existent zoom 18+
+    }
+  )
+};
 
 const map = L.map("map", {
         center: [34.156113, -118.131943],
         zoom: 13,
+        zoomControl: true, 
         editable: true, // Required for Leaflet.Editable
     });
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+document.querySelectorAll('input[name="mapView"]').forEach(input => {
+    input.addEventListener('change', (e) => {
+        const selected = e.target.value;
+
+        // Remove all other base layers
+        Object.values(baseLayers).forEach(layer => {
+        if (map.hasLayer(layer)) {
+            map.removeLayer(layer);
+        }
+        });
+
+        // Add the selected one
+        baseLayers[selected].addTo(map);
+        if (selected === 'terrain' && map.getZoom() > 17) {
+            map.setZoom(17);
+  }
+
+    });
+});
+/*L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     minZoom: 12,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
+*/
 
 let selectionRect = null;     
 const infoBox = document.getElementById('infoBox');
@@ -157,6 +199,7 @@ function updateInfoBox(feature, selectedPoints) {
     htmlOut += `<div>Density: ${density.toFixed(0)}</div>`;
     htmlOut += `<div>Benefits: ...</div>`;
     infoBox.innerHTML = htmlOut;
+
 //How Much CO2 Does A Tree Absorb?
         //average value of 10 kilograms/22 pounds per tree per year
     //https://onetreeplanted.org/blogs/stories/how-much-co2-does-tree-absorb?utm_source=chatgpt.com
@@ -184,8 +227,11 @@ function updateInfoBox(feature, selectedPoints) {
     */
 }
 
+/*
+ *  Model select base on GeoJson of the tree points against census blocks
+ */
 
-
+ // color of each census block base on tree density
 function getDensityColor(d) {
   return d > 25  ? '#0d3614' :
          d > 20  ? '#0c4d17' :
@@ -201,11 +247,11 @@ function addLegend() {
   const legend = document.getElementById('legend');
   const grades = [0, 1, 5, 10, 15, 20, 25];
 
-  let html = `<strong>Tree Density<br>(trees/ha)</strong><br>`;
+  let html = `<strong>Tree Density in census block<br>(trees/ha)</strong><br>`;
   for (let i = grades.length - 1; i >= 0; i--) {
     const from = grades[i];
     const to = grades[i + 1];
-    const label = to ? `${from}–${to}` : `> ${from}`;
+    const label = to ? `${from}-${to}` : `> ${from}`;
     html += `
       <div>
         <span style="background:${getDensityColor(from)}"></span>${label}
@@ -231,70 +277,48 @@ function interpolateColor(color1, color2, factor) {
 
     return `rgb(${r}, ${g}, ${b})`;
 }
-/*
-function ShapeOptions(feature) {
-    return {
-        fillColor: 'brown',
-        weight: 1,
-        opacity: 1,
-        color: 'white',
-        //dashArray: '3',
-        fillOpacity: 0.3
-    };
-}
-*/
-const treePoints = street_row_trees
 
-/*
-census_blocks.features.forEach(feature => {
-  const areaSqM = turf.area(feature);
-
-  // Get all trees within this polygon using Turf's spatial indexing
-  const selected = turf.pointsWithinPolygon(treePoints, feature);
-  const treeCount = selected.features.length;
-
-  feature.properties.areaSqM = areaSqM;
-  feature.properties.treeCount = treeCount;
-  feature.properties.density = (treeCount / areaSqM) * 10000; // per hectare
-});
-*/
+let treeList = [street_row_trees, prediction_trees]
+let treePoints = treeList[0]
 
 function ShapeOptions(feature) {
   const density = feature.properties.density || 0; // if already computed
   //alert(density);
+    //const factor = (3 - 1) / (26 - 1);
   return {
     
     fillColor: getDensityColor(density),
+    //fillColor: interpolateColor('#0d3614', '#c98422', factor),
     weight: 1,
-    color: "#777",
-    fillOpacity: 0.7
+    color: "#888",
+    fillOpacity: 0.5
   };
 }
 
+const hoverStyle = {
+    color: "#fff",
+    weight: 3,
+    fillOpacity: 0.5
+};
+
+const clickBorderStyle = {
+    weight: 3,
+    color: "#09522c", // Black border for selection
+    fillOpacity: 0.5
+};
 
 function createCircleMarker(feature, latlng) {
     return L.circleMarker(latlng, {
         radius: 2,
-        fillColor: "#0d4a09",
+        fillColor: "#bfffde",
         color: "#50817e",
         weight: 0.5,
         opacity: 1,
-        fillOpacity: 0.8
+        fillOpacity: 1
     //}).bindPopup(`Point2: ${feature.properties.extended_Trunk_Diameter}`);
     });
     
 }
-//const pointLayer = L.geoJSON(street_row_trees, {
-//const pointLayer = L.geoJSON(merged_tree, {
-
-
-const pointLayer = L.geoJSON(treePoints, {
-    createCircleMarker, 
-    onEachFeature: (feature, layer) => {
-        const diameter = feature?.properties?.extended_Trunk_Diameter;
-        //layer.bindPopup(`Point: ${feature.properties}`);
-    }
-});
                      
 function removeCircleMarker(){
     map.eachLayer(function (l) {
@@ -302,49 +326,121 @@ function removeCircleMarker(){
             map.removeLayer(l);
         }
     });
+}
+let toolon = "blocks"; // default
+let polygonLayer = null;
+let treeLayer = null;
+let selectedLayer = null; // Track clicked layer
+let selectedBlockFeature = null;
 
+function loadGeoJSON(data) {
+  if (polygonLayer) map.removeLayer(polygonLayer);
+  if (treeLayer) {
+    map.removeLayer(treeLayer);
+    treeLayer = null;
+  }
+
+  polygonLayer = L.geoJSON(data, {
+    style: ShapeOptions,
+    onEachFeature: (feature, layer) => {
+        //layer.bindPopup(feature.properties.name);
+        layer.on('click', () => {
+            if (toolon !== "blocks") return;
+            // Reset previous selected layer
+            if (selectedLayer && selectedLayer !== layer) {
+                selectedLayer.setStyle(ShapeOptions(selectedLayer.feature));
+            }
+
+            // Set new selected layer style
+            layer.setStyle(clickBorderStyle);
+
+            selectedLayer = layer;
+            selectedBlockFeature = feature;
+            // Show tree points
+            showTrees(feature);
+        });
+
+        layer.on('mouseover', () => {
+            if (toolon !== "blocks") return;
+            if (layer !== selectedLayer) {
+                layer.setStyle(hoverStyle)
+            }
+        });
+
+        layer.on('mouseout', () => {
+            if (toolon !== "blocks") return;
+            if (layer !== selectedLayer) {
+                layer.setStyle(ShapeOptions(feature));
+            }
+        });
+    }
+    }).addTo(map);
+    //handleToolChange(toolon);
 }
 
-const polygonLayer = L.geoJSON(censusBlocksTreeDensity, {
-  style: ShapeOptions, // heatmap style function — do NOT change it
-  onEachFeature: (feature, layer) => {
-    layer.on('click', function () {
-      if (!selectionRect) {
-        removeCircleMarker();
+function showTrees(blockFeature) {
+    if (!treePoints) return;
 
-        // Filter treePoints inside this polygon
-        const selectedPoints = {
-          type: "FeatureCollection",
-          features: treePoints.features.filter((pt) =>
-            turf.booleanPointInPolygon(pt, feature)
-          )
-        };
+    // Remove previous highlight layer
+    if (treeLayer) {
+        map.removeLayer(treeLayer);
+        treeLayer = null;
+    }
 
-        // Use precomputed properties
-        const areaSqMeters = feature.properties.areaSqM;
-        const pointCount = feature.properties.treeCount;
-        const densityPerHectare = feature.properties.density;
-        const areaAcres = areaSqMeters * 0.000247105;
+    const blockPolygon = turf.feature(blockFeature.geometry);
 
-        // Update info box — just showing data
-        const html = `
-          <b>Area:</b> ${areaAcres.toFixed(2)} acres<br>
-          <b>Trees:</b> ${pointCount}<br>
-          <b>Density:</b> ${densityPerHectare.toFixed(2)} trees/ha
-        `;
-        infoBox.innerHTML = html;
+    // Filter points that are within the clicked polygon
+    const filtered = turf.pointsWithinPolygon(treePoints, blockPolygon);
 
-        // Add points inside this polygon
-        L.geoJSON(selectedPoints, {
-          pointToLayer: createCircleMarker
-        }).addTo(map);
-      }
+    // Draw only filtered points
+    treeLayer = L.geoJSON(filtered, {
+        pointToLayer: createCircleMarker
+    }).addTo(map);
+
+    updateInfoBox(blockPolygon, filtered);
+}
+
+const modelData = {
+    "baseline": {
+        polygon: census_blocks_with_prediction,
+        trees: prediction_trees
+    },
+    "training": {
+        polygon: census_blocks_with_street,
+        trees: street_row_trees
+    },
+    "deepforest": {
+        polygon: census_blocks_with_prediction,
+        trees: prediction_trees
+    }
+};
+
+function getSelectedModel() {
+    const selected = document.querySelector('input[name="model"]:checked');
+    return selected ? selected.value : null;
+}
+
+document.querySelectorAll('input[name="model"]').forEach(input => {
+    input.addEventListener('change', () => {
+        const selectedModel = getSelectedModel();
+        const data = modelData[selectedModel];
+        if (!data) return;
+
+        treePoints = data.trees;
+        loadGeoJSON(data.polygon);
+        handleToolChange(toolon);
     });
-  }
-}).addTo(map);
+});
+
 
 
 function updateVisiblePoints() {
+
+    if (!selectionRect || (toolon !== "rectangle" && toolon !== "street")) {
+        insidePointsLayer.clearLayers();
+        return;
+    }
+
     if (selectionRect){
         const rectBounds = selectionRect.getBounds();
         const turfPoly = turf.polygon([[
@@ -371,25 +467,16 @@ function updateVisiblePoints() {
     }
 }
 
-const MAX_WIDTH = 0.02;  // degrees
-const MAX_HEIGHT = 0.02; // degrees
-
-function limitRectangleSize(e) {
-  const bounds = selectionRect.getBounds();
-  const width = Math.abs(bounds.getEast() - bounds.getWest());
-  const height = Math.abs(bounds.getNorth() - bounds.getSouth());
-
-  if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-    // Revert to previous allowed bounds
-    selectionRect.setBounds(previousValidBounds);
-  } else {
-    previousValidBounds = bounds; // Update valid bounds
-  }
-
-  updateVisiblePoints(); // Still update filtered points
+function genMapViewRect() {
+    if (selectionRect) {
+        map.removeLayer(selectionRect);
+    }
+    const bounds = map.getBounds();
+    selectionRect = L.rectangle(bounds); // Not added to map
 }
 
-let toolon = null;
+const MAX_WIDTH = 0.02;  // degrees
+const MAX_HEIGHT = 0.02; // degrees
 
 function genRec(center) {
     const offsetLat = 0.00286;  // ≈ 317 meters
@@ -405,9 +492,9 @@ function genRec(center) {
         selectionRect.setBounds(bounds);
     } else {
         selectionRect = L.rectangle(bounds, {
-            color: 'blue',
-            weight: 2,
-            fillOpacity: 0.2,
+            color: '#b1fcc5',
+            weight: 3,
+            fillOpacity: 0.1,
             draggable: true
         }).addTo(map);
 
@@ -419,10 +506,23 @@ function genRec(center) {
         map.on("zoomend", updateVisiblePoints); // Update on zoom if dragging isn't available
     }
 }
+function onMapMoveOrZoom() {
+    genMapViewRect();
+    updateVisiblePoints();
+}
+
+function waitForZoomThenRun(targetZoom, callback) {
+  if (map.getZoom() !== targetZoom) {
+    map.once("zoomend", callback);
+    map.setZoom(targetZoom);
+  } else {
+    callback(); // already at target zoom, just run it
+  }
+}
 
 function handleToolChange(tool) {
     removeCircleMarker();
-
+    toolon = tool
     // Remove existing rectangle
     if (selectionRect) {
         map.removeLayer(selectionRect);
@@ -430,18 +530,28 @@ function handleToolChange(tool) {
     }
 
     // Remove old click handler
+    map.off("zoomend", onMapMoveOrZoom);
+    map.off("moveend", onMapMoveOrZoom);
     map.off("click");
 
+    if (toolon !== "blocks" && selectedLayer) {
+        selectedLayer.setStyle(ShapeOptions(selectedLayer.feature));
+        selectedLayer = null;
+    }
+
     if (tool === 'blocks') {
-            toolon = 'blocks';
-            const center = [34.156113, -118.131943];
-            map.zoomControl.enable();
-            map.setView(center, 13);
+        const center = [34.156113, -118.131943];
+        map.zoomControl.enable(); 
+        map.options.minZoom = 0;
+        map.options.maxZoom = 24;
+        
+        //map.setView(center, 13);
     } 
     else if (tool === 'rectangle') {
-        toolon = 'rectangle';
         map.setZoom(15);
-        map.zoomControl.disable();
+        map.zoomControl.enable();
+        map.options.minZoom = 0;
+        map.options.maxZoom = 24;
 
         const center = map.getCenter();
         genRec(center);
@@ -451,13 +561,30 @@ function handleToolChange(tool) {
 
         map.on("click", (e) => {
         // Note: you can also check `toolon` here
-        if (tool === "rectangle") {
-            const center = e.latlng;
-            genRec(center);
-            updateVisiblePoints();  
-        }
+            if (tool === "rectangle") {
+                const center = e.latlng;
+                genRec(center);
+                updateVisiblePoints();  
+            }
         });
     }
+    else if (tool === "street") {
+        const fixedZoom = 18;
+        map.zoomControl.disable();
+        map.options.minZoom = fixedZoom;
+        map.options.maxZoom = fixedZoom;
+
+        waitForZoomThenRun(fixedZoom, () => {
+            genMapViewRect();         // now safe to generate selection
+            onMapMoveOrZoom();        // update visible points
+            map.on("moveend", onMapMoveOrZoom); // bind dynamic update
+        });
+    }
+
+    if (tool === 'blocks' && selectedBlockFeature) {
+        showTrees(selectedBlockFeature); // re-render tree points inside block
+    }
+
 }
 
 const insidePointsLayer = L.geoJSON(null, {
@@ -472,10 +599,36 @@ input.addEventListener('change', (e) => {
     });
 });
 
-// Trigger default on load
-handleToolChange(document.querySelector('input[name="tool"]:checked').value);
+
+
+// Trigger default on load and initialize all variables
                     
-                       
+window.addEventListener('DOMContentLoaded', () => {
+    const groups = ['model', 'tool', 'mapView'];
+
+    groups.forEach(name => {
+        const radios = document.querySelectorAll(`input[name="${name}"]`);
+        radios.forEach(radio => (radio.checked = false)); // Clear all first
+
+        // Find the one with checked attribute in HTML and set checked true to force sync
+        const defaultRadio = document.querySelector(`input[name="${name}"][checked]`);
+        if (defaultRadio) {
+        defaultRadio.checked = true;
+        }
+    });
+    // Load initial dataset
+    map.setZoom(13);
+    baseLayers.satellite.addTo(map); // default view
+
+    const initialModel = getSelectedModel();
+    const initialData = modelData[initialModel];
+    if (initialData) {
+        treePoints = initialData.trees;
+        loadGeoJSON(initialData.polygon);
+    }
+    handleToolChange(document.querySelector('input[name="tool"]:checked').value);
+
+});                   
                     </script>   
 
 
