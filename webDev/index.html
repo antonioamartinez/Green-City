@@ -278,9 +278,6 @@ function interpolateColor(color1, color2, factor) {
     return `rgb(${r}, ${g}, ${b})`;
 }
 
-let treeList = [street_row_trees, prediction_trees]
-let treePoints = treeList[0]
-
 function ShapeOptions(feature) {
   const density = feature.properties.density || 0; // if already computed
   //alert(density);
@@ -316,7 +313,6 @@ const treeBox = {
 
 let toolon = "blocks"; // default
 let polygonLayer = null;
-let treeLayer = null;
 let selectedLayer = null; // Track clicked layer
 let selectedBlockFeature = null;
 const activeModels = new Set();
@@ -342,7 +338,7 @@ const modelData = {
         polygon: census_blocks_deep_forest,
         trees: deep_forest,
         type: "box",
-        size: 2,
+        size: 1,
         color: "#f3f7cb",
         layer: null
     }
@@ -446,7 +442,7 @@ function showTrees(blockFeature) {
                     return {
                         color: modelStyle.color,
                         weight: modelStyle.size || 2,
-                        fillOpacity: 0.3
+                        fillOpacity: 0.1
                     };
                 }
             }).addTo(map);
@@ -495,30 +491,6 @@ function updatePolygonStyle(model) {
         return ShapeOptions(feature);
     });
 }
-
-
-/*  data gen from EDA
-fileMerge = ["Street_ROW_Trees.geojson", "merged_pasadena_prediction_GeoJSON.json", "deep_forest_init.geojson"]
-fileOut = ["census_blocks_with_street", "census_blocks_with_prediction", "census_blocks_deep_forest"]
-treePoints = ["street_row_trees", "prediction_trees", "deep_forest"]
-treeType = ["pt", "pt", "box"]
-*/
-
-/*
-
-document.querySelectorAll('input[name="model"]').forEach(input => {
-    input.addEventListener('change', () => {
-        const selectedModel = getSelectedModel();
-        const data = modelData[selectedModel];
-        if (!data) return;
-
-        treePoints = data.trees;
-        loadGeoJSON(data.polygon);
-        handleToolChange(toolon);
-    });
-});
-
-*/
 
 function updateVisiblePoints() {
     if (!selectionRect || (toolon !== "rectangle" && toolon !== "street")) {
@@ -673,28 +645,32 @@ function waitForZoomThenRun(targetZoom, callback) {
   }
 }
 
-function removeTreeLayer() {
-    if (treeLayer && map.hasLayer(treeLayer)) {
-        map.removeLayer(treeLayer);
-        treeLayer = null;  // optional: reset variable
+function onMapClickRectangle(e) {
+    if (toolon !== "rectangle") return;
+
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && sidebar.contains(e.originalEvent.target)) {
+        // Click was inside sidebar — ignore
+        return;
     }
+
+    const center = e.latlng;
+    genRec(center);
+    updateVisiblePoints();
 }
 
 function handleToolChange(tool) {
     removeCircleMarker();
-    removeTreeLayer()
     toolon = tool
     // Remove existing rectangle
     if (selectionRect) {
         map.removeLayer(selectionRect);
-        treeLayer = null;  
         selectionRect = null;
     }
 
     // Remove old click handler
     map.off("zoomend", onMapMoveOrZoom);
     map.off("moveend", onMapMoveOrZoom);
-    map.off("click");
 
     if (toolon !== "blocks" && selectedLayer) {
         selectedLayer.setStyle(ShapeOptions(selectedLayer.feature));
@@ -706,7 +682,17 @@ function handleToolChange(tool) {
         map.zoomControl.enable(); 
         map.options.minZoom = 0;
         map.options.maxZoom = 24;
-        
+        map.on("zoomend", () => {
+        if (toolon === "blocks" && selectedLayer) {
+                showTrees(selectedLayer.feature);
+            }
+        });
+
+        map.on("moveend", () => {
+            if (toolon === "blocks" && selectedLayer) {
+                showTrees(selectedLayer.feature);
+            }
+        });
         //map.setView(center, 13);
     } 
     else if (tool === 'rectangle') {
@@ -719,16 +705,13 @@ function handleToolChange(tool) {
         genRec(center);
         updateVisiblePoints();
 
+        // Remove any previous zoom listener and re-add
+        map.off("zoomend", updateVisiblePoints);
         map.on("zoomend", updateVisiblePoints);
 
-        map.on("click", (e) => {
-        // Note: you can also check `toolon` here
-            if (tool === "rectangle") {
-                const center = e.latlng;
-                genRec(center);
-                updateVisiblePoints();  
-            }
-        });
+        // Remove any previous click listener for rectangle tool and re-add
+        map.off("click", onMapClickRectangle);
+        map.on("click", onMapClickRectangle);
     }
     else if (tool === "street") {
         const fixedZoom = 18;
