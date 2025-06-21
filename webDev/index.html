@@ -83,24 +83,23 @@
                             Grayscale is a free Bootstrap theme created by Start Bootstrap. It can be yours right now, simply download the template on
                             <a href="https://startbootstrap.com/theme/grayscale/">the preview page.</a>
                             The theme is open source, and you can use it for any purpose, personal or commercial.
+
                         </p>
                     </div>
                 </div>
-                <img class="img-fluid" src="assets/img/ipad.png" alt="..." />
+
             </div>
         </section>
         <!-- Projects-->
         
 
-        <section class=" bg-light" id="app">
+        <section class="bg-light" id="app" height="100%">
             <!-- Featured app Row-->
-            <div class="row align-items-center">
-                <!--script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9wiYG45-0v1zrtcrU6djYgymkaBRTIis&callback=initMap" defer></script-->
-                
+            <div class="row align-items-center"> 
                 
                 <div class="featured-text text-center text-lg-left">
 
-                    <div id="map" style="width: 100%; height: 640px;">
+                    <div id="map">
                         <div id="sidebar">
                              <div class="sidebarmenu">Tree Detection Model</div>
                              <label><input type="checkbox" name="model" value="training" checked > Training Set</label>
@@ -120,8 +119,9 @@
                             <label><input type="radio" name="mapView" value="streets"> Streets</label>
                             <label><input type="radio" name="mapView" value="terrain"> Terrain</label>
                         </div>
-                        <div id="infoBox">Area: calculating...</div>
+                        <div id="infoBox">Selected Area</div>
                         <div id="legend"></div>
+                        <div id="loading">Loading...</div>
 
                     </div>
 
@@ -148,6 +148,17 @@ const baseLayers = {
     }
   )
 };
+function showLoading() {
+    document.getElementById('loading').style.display = 'block';
+}
+
+function hideLoading() {
+    document.getElementById('loading').style.display = 'none';
+}
+
+window.addEventListener('load', function() {
+    document.getElementById('loading').style.display = 'none';
+});
 
 const map = L.map("map", {
         center: [34.156113, -118.131943],
@@ -194,8 +205,10 @@ function updateInfoBox(feature, selectedPoints, numModel) {
     //const hectares = acres * 0.404686;
     const density = pointCount / hectare;
 
-    htmlOut = `<div>Area: ${areaAcres.toFixed(0)} Acre</div>`;
-    htmlOut += `<div>Trees: ${pointCount}</div>`;
+    htmlOut = `<h5>Selected Area</h5>`;
+    htmlOut += `<div>Area: ${areaAcres.toFixed(0)} Acre</div>`;
+    htmlOut += `<div>Model Selected: ${numModel}</div>`;
+    htmlOut += `<div>Avg Trees: ${pointCount.toFixed(0)}</div>`;
     htmlOut += `<div>Density: ${density.toFixed(0)}</div>`;
     htmlOut += `<div>Benefits: ...</div>`;
     infoBox.innerHTML = htmlOut;
@@ -233,21 +246,21 @@ function updateInfoBox(feature, selectedPoints, numModel) {
 
  // color of each census block base on tree density
 function getDensityColor(d) {
-  return d > 25  ? '#0d3614' :
-         d > 20  ? '#0c4d17' :
-         d > 15  ? '#177828' :
-         d > 10  ? '#198a2c' :
-         d > 5   ? '#1ba620' :
-         d > 1   ? '#67a61b' :
-         d > 0   ? '#b9c215' :
-                   '#c98422';
+  return d > 25  ? '#0c2e13' :
+         d > 20  ? '#0e6920' :
+         d > 15  ? '#198a2c':
+         d > 10  ? '#29ba3a':
+         d > 5   ? '#6af73b' :
+         d > 1   ? '#b7fc47':
+         d > 0   ? '#fcf347':
+                   '#fc9d30';
 }
 
 function addLegend() {
   const legend = document.getElementById('legend');
   const grades = [0, 1, 5, 10, 15, 20, 25];
 
-  let html = `<strong>Tree Density in census block<br>(trees/ha)</strong><br>`;
+  let html = `<strong>Tree Density <br>in census block<br>(trees/ha)</strong><br><br>`;
   for (let i = grades.length - 1; i >= 0; i--) {
     const from = grades[i];
     const to = grades[i + 1];
@@ -300,7 +313,7 @@ const hoverStyle = {
 
 const clickBorderStyle = {
     weight: 2,
-    color: "#fff", // Black border for selection
+    color: "#fff", 
     fillOpacity: 0.5
 };
 
@@ -323,14 +336,14 @@ const modelData = {
         trees: prediction_trees,
         type: "pt",
         color: "#f7b283",
-        size: 2,
+        size: 3,
         layer: null  // add this!
     },
     "training": {
         polygon: census_blocks_with_street,
         trees: street_row_trees,
         type: "pt",
-        size: 2,
+        size: 3,
         color: "#7dc7ff",
         layer: null
     },
@@ -338,7 +351,7 @@ const modelData = {
         polygon: census_blocks_deep_forest,
         trees: deep_forest,
         type: "box",
-        size: 1,
+        size: 2,
         color: "#f3f7cb",
         layer: null
     }
@@ -384,10 +397,13 @@ function showTrees(blockFeature) {
         }
     });
 
+
     // If no models are active, don't draw anything
     if (activeModels.size === 0) return;
 
     const blockPolygon = turf.feature(blockFeature.geometry);
+
+    let combinedFeatures = []; 
 
     activeModels.forEach(model => {
         const data = modelData[model];
@@ -447,7 +463,17 @@ function showTrees(blockFeature) {
                 }
             }).addTo(map);
         }// if box
+        combinedFeatures = combinedFeatures.concat(filteredGeoJSON.features);
+        
     });
+
+
+    const combinedFeatureCollection = {
+        type: "FeatureCollection",
+        features: combinedFeatures
+    };
+
+    updateInfoBox(blockFeature, combinedFeatureCollection, activeModels.size);
 }
 
 
@@ -484,10 +510,39 @@ polygonLayer = L.geoJSON(modelData["training"].polygon, {
     }
 }).addTo(map);
 
-function updatePolygonStyle(model) {
-    //const color = getModelColor(model);
+function updatePolygonStyle() {
+    const numModels = activeModels.size;
+    if (numModels === 0) {
+        // No models selected, reset styles
+        polygonLayer.setStyle(ShapeOptions);
+        return;
+    }
 
-    polygonLayer.setStyle(function(feature) {
+    const baseFeatures = polygonLayer.toGeoJSON().features;
+
+    // Update densities by averaging across models for each polygon by index
+    baseFeatures.forEach((feature, i) => {
+        let totalDensity = 0;
+
+        activeModels.forEach(model => {
+        const modelFeatures = modelData[model].polygon.features;
+        if (modelFeatures && modelFeatures[i]) {
+            const d = modelFeatures[i].properties.density || 0;
+            totalDensity += d;
+        }
+        });
+
+        feature.properties.density = totalDensity / numModels;
+    });
+
+    // Now update style for all layers inside polygonLayer
+    polygonLayer.setStyle((feature) => {
+        // Find index of this feature to get updated density
+        const index = polygonLayer.getLayers().findIndex(l => l.feature === feature);
+        if (index >= 0) {
+        return ShapeOptions(baseFeatures[index]);
+        }
+        // fallback
         return ShapeOptions(feature);
     });
 }
@@ -525,6 +580,7 @@ function updateVisiblePoints() {
 
     if (activeModels.size === 0) return;
 
+    let combinedFeatures = [];  // top of function
     activeModels.forEach(model => {
         const data = modelData[model];
         if (!data || !data.trees) return;
@@ -582,12 +638,20 @@ function updateVisiblePoints() {
                     return {
                         color: modelStyle.color,
                         weight: modelStyle.size || 2,
-                        fillOpacity: 0.3
+                        fillOpacity: 0.1
                     };
                 }
             }).addTo(map);
-        }
+        }// if box
+        combinedFeatures = combinedFeatures.concat(filteredGeoJSON.features);
+
     });
+    const combinedFeatureCollection = {
+        type: "FeatureCollection",
+        features: combinedFeatures
+    };
+
+    updateInfoBox(turfPoly, combinedFeatureCollection, activeModels.size);
 }
 
     
@@ -694,6 +758,7 @@ function handleToolChange(tool) {
             }
         });
         //map.setView(center, 13);
+        updateVisiblePoints()
     } 
     else if (tool === 'rectangle') {
         map.setZoom(15);
@@ -745,6 +810,7 @@ function addModelLayer(model) {
     if (toolon === "blocks" && selectedLayer) {
         showTrees(selectedLayer.feature);
     }
+    updatePolygonStyle()
 }
 
 function removeModelLayer(model) {
@@ -762,6 +828,7 @@ function removeModelLayer(model) {
     if (toolon === "blocks" && selectedLayer) {
         showTrees(selectedLayer.feature);
     }
+    updatePolygonStyle()
 }
 // Automatically toggle when radio button changes
 document.querySelectorAll('input[name="tool"]').forEach(input => {

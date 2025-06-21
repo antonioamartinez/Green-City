@@ -1,3 +1,22 @@
+#map {
+    
+    height: calc(100vh - 100px);
+}
+
+#loading{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    z-index: 9999;
+    display: none;
+}
+
 #sidebar {
     position: absolute;
     top: 20px;
