@@ -36,8 +36,16 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+.pytest_cache/
+cover/
+*.png
+*.tif
+*.geojson
+# Translations
+*.mo
+*.pot
 
-# ─── Logs & Reports ────────────────────────────────────────────────────
+# Django stuff:
 *.log
 pip-log.txt
 pip-delete-this-directory.txt
