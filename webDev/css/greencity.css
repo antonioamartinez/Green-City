@@ -17,17 +17,14 @@
     display: none;
 }
 
-#sidebar {
-    position: absolute;
-    top: 20px;
-    left: 35px;
-    width: 200px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 15px;
-    z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+
+
+.model-symbol {
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: middle;
+  border: 1px solid #333;
 }
 
 #infoBox {
@@ -40,21 +37,38 @@
     border: 1px solid #666;
     border-radius: 4px;
     font-family: Arial, sans-serif;
-    font-size: 14px;
+    font-size: 1.3em;
     box-shadow: 0 0 6px rgba(0,0,0,0.3);
     text-align: left;
-    width: 200px;
+    width: 300px;
   }
 
-  #sidebar label {
+.infoText{
+    padding-bottom: 1em;
+}
+
+#sidebar {
+    position: absolute;
+    top: 20px;
+    left: 35px;
+    width: calc(100vw * 0.125);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#sidebar label {
     display: block;
-    margin: 0px 0;
+    margin: 5px 5;
     text-align: left;
-    font-size: 14px;
+    font-size: 1.3em;
 }
 
 .sidebarmenu {
-    font-size: 14px;
+    font-size: 1.5em;
     font-weight: bold;
     text-align: left;
     margin-top: 0px;

@@ -46,7 +46,7 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
 
-                <a class="navbar-brand" href="#page-top">Green City</a>
+                <a class="navbar-brand" href="#page-top"> Green City</a>
                 <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
                     <i class="fas fa-bars"></i>
@@ -54,8 +54,9 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#project">Project</a></li>
                         <li class="nav-item"><a class="nav-link" href="#app">App</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#evaluation">Evaluation</a></li>
                         <li class="nav-item"><a class="nav-link" href="#signup">Contact</a></li>
                     </ul>
                 </div>
@@ -78,12 +79,11 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-lg-8">
-                        <h2 class="text-white mb-4">Built with Bootstrap 5</h2>
+                        <h3 class="text-white mb-4">Project Overview</h3>
                         <p class="text-white-50">
-                            Grayscale is a free Bootstrap theme created by Start Bootstrap. It can be yours right now, simply download the template on
-                            <a href="https://startbootstrap.com/theme/grayscale/">the preview page.</a>
-                            The theme is open source, and you can use it for any purpose, personal or commercial.
-
+                        </p>
+                        <h3 class="text-white mb-4">Problem & Motivation</h3>
+                        <p class="text-white-50">
                         </p>
                     </div>
                 </div>
@@ -91,8 +91,22 @@
             </div>
         </section>
         <!-- Projects-->
-        
+        <section class="project-section text-center" id="project">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-8">
+                        <h2 class="text-white mb-4">Dataset</h2>
+                        <p class="text-white-50">
+                        </p>
+                        <h2 class="text-white mb-4">Data Science Applications</h2>
+                        <p class="text-white-50">
+                        </p>
+                    </div>
+                </div>
 
+            </div>
+        </section>
+        <!-- App-->    
         <section class="bg-light" id="app" height="100%">
             <!-- Featured app Row-->
             <div class="row align-items-center"> 
@@ -102,9 +116,9 @@
                     <div id="map">
                         <div id="sidebar">
                              <div class="sidebarmenu">Tree Detection Model</div>
-                             <label><input type="checkbox" name="model" value="training" checked > Training Set</label>
-                             <label><input type="checkbox" name="model" value="baseline" > Baseline</label>
-                            <label><input type="checkbox" name="model" value="deepforest" >  Deep Forest</label>
+                             <label><input type="checkbox" name="model" value="training" checked > Training Set<span class="model-symbol"></span></label>
+                             <label><input type="checkbox" name="model" value="baseline" > Baseline<span class="model-symbol"></span></label>
+                            <label><input type="checkbox" name="model" value="deepforest" >  Deep Forest<span class="model-symbol"></span></label>
                              
                                 <hr>
                              <div class="sidebarmenu">Area Selection</div>
@@ -119,7 +133,15 @@
                             <label><input type="radio" name="mapView" value="streets"> Streets</label>
                             <label><input type="radio" name="mapView" value="terrain"> Terrain</label>
                         </div>
-                        <div id="infoBox">Selected Area</div>
+                        <div id="infoBox">
+                            <h4>Tree Benefits</h4>
+                            <div class="infoText"><b>How Much CO2 Does A Tree Absorb?</b></div>
+                            <div class="infoText">On average, each tree obsorbs 10 kilograms/22 pounds of CO2 per year</div>
+                            <hr>
+                            <div class="infoText"><b>How much pollutant (PM₂.₅) can a tree remove?</b></div>
+                            <div class="infoText">An urban tree removes 0.015 kg (15 g) PM₂.₅ pollutant per year</div>
+
+                        </div>
                         <div id="legend"></div>
                         <div id="loading">Loading...</div>
 
@@ -205,12 +227,26 @@ function updateInfoBox(feature, selectedPoints, numModel) {
     //const hectares = acres * 0.404686;
     const density = pointCount / hectare;
 
-    htmlOut = `<h5>Selected Area</h5>`;
-    htmlOut += `<div>Area: ${areaAcres.toFixed(0)} Acre</div>`;
-    htmlOut += `<div>Model Selected: ${numModel}</div>`;
-    htmlOut += `<div>Avg Trees: ${pointCount.toFixed(0)}</div>`;
-    htmlOut += `<div>Density: ${density.toFixed(0)}</div>`;
-    htmlOut += `<div>Benefits: ...</div>`;
+    htmlOut = `<h4>Selected Area</h4>`;
+    htmlOut += `<div class="infoText">Area: ${areaAcres.toFixed(0)} Acre<br>`;
+    htmlOut += `Model Selected: ${numModel}<br>`;
+    htmlOut += `Avg Tree Count: ${pointCount.toFixed(0)}<br>`;
+    htmlOut += `Density: ${density.toFixed(0)}<br>`;
+    htmlOut += `<div><hr></div>`;
+
+    const totalCO2_kg = pointCount * 10;
+    const totalCO2_tonnes = totalCO2_kg / 1000;
+
+    htmlOut += `<div class="infoText">The selected area absorbed a total of ${totalCO2_kg.toFixed(2)} kg (${totalCO2_tonnes.toFixed(2)} tonnes) CO₂ per year</div>`;
+    htmlOut += `<div><hr></div>`;
+
+    const PM25_per_tree_kg = 0.015;
+
+    const total_pm25_kg = pointCount * PM25_per_tree_kg;
+    const total_pm25_tonnes = total_pm25_kg / 1000;
+
+    htmlOut += `<div class="infoText">The selected area removed approximately ${total_pm25_kg.toFixed(2)} kg (${total_pm25_tonnes.toFixed(4)} tonnes)  pollution (PM₂.₅) per year</div>`;
+
     infoBox.innerHTML = htmlOut;
 
 //How Much CO2 Does A Tree Absorb?
@@ -317,10 +353,10 @@ const clickBorderStyle = {
     fillOpacity: 0.5
 };
 
-const treeBox = {
-    color: "#fff",
+const blankBlock = {
+    fillColor: "#b8fca7",
     weight: 1,
-    fillOpacity: 0.1
+    fillOpacity: 0.3
 };
 
 
@@ -351,7 +387,7 @@ const modelData = {
         polygon: census_blocks_deep_forest,
         trees: deep_forest,
         type: "box",
-        size: 2,
+        size: 3,
         color: "#f3f7cb",
         layer: null
     }
@@ -477,75 +513,88 @@ function showTrees(blockFeature) {
 }
 
 
-polygonLayer = L.geoJSON(modelData["training"].polygon, {
-    style: ShapeOptions,
+polygonLayer = L.geoJSON(census_block, {
+    style: blankBlock,  // initial neutral style, will be updated dynamically
     onEachFeature: (feature, layer) => {
         layer.on('click', () => {
             if (toolon !== "blocks") return;
 
             if (selectedLayer && selectedLayer !== layer) {
-                selectedLayer.setStyle(ShapeOptions(selectedLayer.feature));
+                selectedLayer.setStyle(
+                    activeModels.size === 0
+                        ? blankBlock
+                        : ShapeOptions(selectedLayer.feature)
+                );
             }
 
             layer.setStyle(clickBorderStyle);
             selectedLayer = layer;
             selectedBlockFeature = feature;
 
-            showTrees(feature);  // only show trees on click
         });
 
         layer.on('mouseover', () => {
             if (toolon !== "blocks") return;
             if (layer !== selectedLayer) {
-                layer.setStyle(hoverStyle)
+                layer.setStyle(
+                    activeModels.size === 0 ? blankBlock : hoverStyle
+                );
             }
         });
 
         layer.on('mouseout', () => {
             if (toolon !== "blocks") return;
             if (layer !== selectedLayer) {
-                layer.setStyle(ShapeOptions(feature));
+                layer.setStyle(
+                    activeModels.size === 0
+                        ? blankBlock
+                        : ShapeOptions(feature)
+                );
             }
         });
     }
 }).addTo(map);
 
+
+
 function updatePolygonStyle() {
     const numModels = activeModels.size;
+    
     if (numModels === 0) {
         // No models selected, reset styles
-        polygonLayer.setStyle(ShapeOptions);
+        polygonLayer.setStyle(blankBlock);
         return;
     }
+    const layers = polygonLayer.getLayers();
+    //activeModels.forEach(model => {alert(model)});
+    layers.forEach(layer => {
+        const objectId = layer.feature.properties.OBJECTID;
+        if (objectId === undefined) {
+            console.warn("Feature missing OBJECTID:", layer.feature);
+            return;
+        }
 
-    const baseFeatures = polygonLayer.toGeoJSON().features;
-
-    // Update densities by averaging across models for each polygon by index
-    baseFeatures.forEach((feature, i) => {
         let totalDensity = 0;
+        let count = 0;
 
         activeModels.forEach(model => {
-        const modelFeatures = modelData[model].polygon.features;
-        if (modelFeatures && modelFeatures[i]) {
-            const d = modelFeatures[i].properties.density || 0;
-            totalDensity += d;
-        }
+            const modelFeatures = modelData[model].polygon.features;
+            const matchingFeature = modelFeatures.find(f => f.properties.OBJECTID === objectId);
+            if (matchingFeature && typeof matchingFeature.properties.density === "number") {
+                totalDensity += matchingFeature.properties.density;
+                count++;
+            }
         });
 
-        feature.properties.density = totalDensity / numModels;
+        const avgDensity = count > 0 ? totalDensity / count : 0;
+        layer.feature.properties.density = avgDensity;
     });
 
-    // Now update style for all layers inside polygonLayer
-    polygonLayer.setStyle((feature) => {
-        // Find index of this feature to get updated density
-        const index = polygonLayer.getLayers().findIndex(l => l.feature === feature);
-        if (index >= 0) {
-        return ShapeOptions(baseFeatures[index]);
-        }
-        // fallback
-        return ShapeOptions(feature);
-    });
+    polygonLayer.setStyle(feature => ShapeOptions(feature));
+    
 }
+
+
 
 function updateVisiblePoints() {
     if (!selectionRect || (toolon !== "rectangle" && toolon !== "street")) {
@@ -806,11 +855,32 @@ function addModelLayer(model) {
 
     activeModels.add(model);
 
-    // If current tool is "blocks" and a block is selected, update trees
     if (toolon === "blocks" && selectedLayer) {
         showTrees(selectedLayer.feature);
+    } else if (toolon === "rectangle" || toolon === "street") {
+        // Add tree layer to map and store reference in data.layer
+        let layer = null;
+
+        if (data.type === "pt") {
+            layer = L.geoJSON(data.trees, {
+                pointToLayer: createCircleMarker
+            }).addTo(map);
+        } else if (data.type === "box") {
+            layer = L.geoJSON(data.trees, {
+                style: function(feature) {
+                    return {
+                        color: data.color,
+                        weight: data.size || 2,
+                        fillOpacity: 0.3
+                    };
+                }
+            }).addTo(map);
+        }
+
+        data.layer = layer;
     }
-    updatePolygonStyle()
+
+    updatePolygonStyle();
 }
 
 function removeModelLayer(model) {
@@ -841,7 +911,7 @@ input.addEventListener('change', (e) => {
 // Trigger default on load and initialize all variables
                     
 window.addEventListener('DOMContentLoaded', () => {
-    const groups = ['model', 'tool', 'mapView'];
+    const groups = [ 'tool', 'mapView'];
 
     groups.forEach(name => {
         const radios = document.querySelectorAll(`input[name="${name}"]`);
@@ -857,30 +927,44 @@ window.addEventListener('DOMContentLoaded', () => {
     // Load initial dataset
     map.setZoom(13);
     baseLayers.satellite.addTo(map); // default view
-    }
-);
+    
 
-document.querySelectorAll('input[name="model"]').forEach(cb => {
-    cb.addEventListener('change', function() {
-        const model = this.value;
-        if (this.checked) {
-            addModelLayer(model);
-        } else {
-            removeModelLayer(model);
+
+    document.querySelectorAll('input[name="model"]').forEach(cb => {
+
+        const model = cb.value;
+        const span = cb.parentElement.querySelector('.model-symbol');
+        const data = modelData[model];
+        if (data && span ) {
+            span.style.width = `${data.size * 3}px`;
+            span.style.height = `${data.size * 3}px`;
+            span.style.borderRadius = data.type === "pt" ? "50%" : "0";  // force square corners
+            span.style.backgroundColor = data.color;
+            span.style.border = '1px solid #333';
         }   
-        // Update visible points if tool is rectangle or street
-        if (toolon === "rectangle" || toolon === "street") {
-            updateVisiblePoints();
+        if (cb.value === "training") {
+            cb.checked = true;
+            activeModels.add("training");
+        } else {
+            cb.checked = false;
+            activeModels.delete(cb.value);
         }
-        // Also handle blocks tool if needed
-        if (toolon === "blocks" && selectedBlockFeature) {
-            showTrees(selectedBlockFeature);
-        }
+        cb.addEventListener('change', function () {
+            const model = this.value; // "training", "baseline", or "deepforest"
+
+            if (this.checked) {
+                addModelLayer(model);
+            } else {
+                removeModelLayer(model);
+            }
+        });
     });
 });
 
+
 document.querySelector('input[name="model"][value="training"]').checked = true;
 addModelLayer("training");
+
 
 handleToolChange(document.querySelector('input[name="tool"]:checked').value);
 
@@ -893,7 +977,7 @@ handleToolChange(document.querySelector('input[name="tool"]:checked').value);
 
         </section>
         <!-- Map-->
-        <section class="projects-section bg-light" id="projects">
+        <section class="projects-section bg-light" id="evaluation">
             <div class="container px-4 px-lg-5">
                 <!-- Featured Project Row-->
                 <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
