@@ -11,9 +11,6 @@
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <script src="js/2010_Census_Blocks.js"></script>
-        <script src="js/Street_ROW_Trees.js"></script>
-        <script src="js/classification_datasets.js"></script>
-        <script src="js/merged_pasadena.js"></script>
         <script src="js/census_merged.js"></script>
         <link href="css/greencity.css" rel="stylesheet" />
         <!-- Google fonts-->
@@ -148,6 +145,26 @@
                     </div>
 
 <script language="javascript">
+const infoBoxDefaultHTML = `
+  <h4>Tree Benefits</h4>
+  <div class="infoText"><b>How Much CO2 Does A Tree Absorb?</b></div>
+  <div class="infoText">On average, each tree absorbs 10 kilograms/22 pounds of CO2 per year</div>
+  <hr>
+  <div class="infoText"><b>How much pollutant (PM₂.₅) can a tree remove?</b></div>
+  <div class="infoText">An urban tree removes 0.015 kg (15 g) PM₂.₅ pollutant per year</div>
+`;
+
+document.getElementById("infoBox").innerHTML = infoBoxDefaultHTML;
+
+const sidebar = document.getElementById('sidebar');
+
+sidebar.addEventListener('mouseenter', () => {
+    isPointerOnSidebar = true;
+});
+
+sidebar.addEventListener('mouseleave', () => {
+    isPointerOnSidebar = false;
+});
 
 // Get map view and map view selection
 const baseLayers = {
@@ -530,7 +547,7 @@ polygonLayer = L.geoJSON(census_block, {
             layer.setStyle(clickBorderStyle);
             selectedLayer = layer;
             selectedBlockFeature = feature;
-
+             showTrees(feature); 
         });
 
         layer.on('mouseover', () => {
@@ -795,13 +812,17 @@ function handleToolChange(tool) {
         map.zoomControl.enable(); 
         map.options.minZoom = 0;
         map.options.maxZoom = 24;
+
+        
         map.on("zoomend", () => {
-        if (toolon === "blocks" && selectedLayer) {
+            if (isPointerOnSidebar) return;  // Ignore if over sidebar
+            if (toolon === "blocks" && selectedLayer) {
                 showTrees(selectedLayer.feature);
             }
         });
 
         map.on("moveend", () => {
+            if (isPointerOnSidebar) return;  // Ignore if over sidebar
             if (toolon === "blocks" && selectedLayer) {
                 showTrees(selectedLayer.feature);
             }
@@ -855,32 +876,11 @@ function addModelLayer(model) {
 
     activeModels.add(model);
 
+    // If current tool is "blocks" and a block is selected, update trees
     if (toolon === "blocks" && selectedLayer) {
         showTrees(selectedLayer.feature);
-    } else if (toolon === "rectangle" || toolon === "street") {
-        // Add tree layer to map and store reference in data.layer
-        let layer = null;
-
-        if (data.type === "pt") {
-            layer = L.geoJSON(data.trees, {
-                pointToLayer: createCircleMarker
-            }).addTo(map);
-        } else if (data.type === "box") {
-            layer = L.geoJSON(data.trees, {
-                style: function(feature) {
-                    return {
-                        color: data.color,
-                        weight: data.size || 2,
-                        fillOpacity: 0.3
-                    };
-                }
-            }).addTo(map);
-        }
-
-        data.layer = layer;
     }
-
-    updatePolygonStyle();
+    updatePolygonStyle()
 }
 
 function removeModelLayer(model) {
@@ -902,8 +902,8 @@ function removeModelLayer(model) {
 }
 // Automatically toggle when radio button changes
 document.querySelectorAll('input[name="tool"]').forEach(input => {
-input.addEventListener('change', (e) => {
-        handleToolChange(e.target.value);
+    input.addEventListener('change', (e) => {
+            handleToolChange(e.target.value);
     });
 });
 
@@ -911,7 +911,7 @@ input.addEventListener('change', (e) => {
 // Trigger default on load and initialize all variables
                     
 window.addEventListener('DOMContentLoaded', () => {
-    const groups = [ 'tool', 'mapView'];
+    const groups = ["model", 'tool', 'mapView'];
 
     groups.forEach(name => {
         const radios = document.querySelectorAll(`input[name="${name}"]`);
@@ -949,22 +949,39 @@ window.addEventListener('DOMContentLoaded', () => {
             cb.checked = false;
             activeModels.delete(cb.value);
         }
+    
         cb.addEventListener('change', function () {
             const model = this.value; // "training", "baseline", or "deepforest"
+            
 
             if (this.checked) {
                 addModelLayer(model);
             } else {
                 removeModelLayer(model);
             }
+            if (activeModels.size === 0){
+                document.getElementById("infoBox").innerHTML = infoBoxDefaultHTML;
+            }
+            // Update visible points if tool is rectangle or streetMore actions
+            if (toolon === "rectangle" || toolon === "street") {
+                //alert("here")
+                updateVisiblePoints();
+            }
+            // Also handle blocks tool if needed
+            if (toolon === "blocks" && selectedBlockFeature) {
+                showTrees(selectedBlockFeature);
+            }
         });
     });
 });
 
+let isPointerOnSidebar = false;
+
+
 
 document.querySelector('input[name="model"][value="training"]').checked = true;
 addModelLayer("training");
-
+document.querySelector('input[name="tool"][value="blocks"]').checked = true;
 
 handleToolChange(document.querySelector('input[name="tool"]:checked').value);
 
