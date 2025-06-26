@@ -22,28 +22,22 @@ from tqdm import tqdm
 
 def tile_raster(mosaic_path: str, out_dir: str, tile_size: int) -> None:
     Path(out_dir).mkdir(parents=True, exist_ok=True)
-
     with rasterio.open(mosaic_path) as src:
         meta_template = src.meta.copy()
-
-        # Iterate over the mosaic by window
-        for i in tqdm(range(0, src.width, tile_size), desc="Columns"):
+        for i in range(0, src.width, tile_size):
             for j in range(0, src.height, tile_size):
                 w = min(tile_size, src.width - i)
                 h = min(tile_size, src.height - j)
-
                 window = Window(i, j, w, h)
                 transform = src.window_transform(window)
-                tile_data = src.read(window=window)
-
+                tile_data = src.read(indexes=[1, 2, 3], window=window)
                 meta = meta_template.copy()
-                meta.update({"height": h, "width": w, "transform": transform})
-
-                out_name = f"tile_{i}_{j}.tif"
-                out_path = Path(out_dir) / out_name
+                meta.update(
+                    {"height": h, "width": w, "transform": transform, "count": 3}
+                )
+                out_path = Path(out_dir) / f"tile_{i}_{j}.tif"
                 with rasterio.open(out_path, "w", **meta) as dst:
                     dst.write(tile_data)
-
     print(f"[OK] Tiles saved in {out_dir}")
 
 

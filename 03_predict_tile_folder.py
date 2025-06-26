@@ -102,6 +102,11 @@ def main() -> None:
     parser.add_argument("--overlap", type=float, default=0.10)
     parser.add_argument("--nms_thresh", type=float, default=0.40)
     parser.add_argument("--score_thresh", type=float, default=0.20)
+    parser.add_argument(
+        "--extra_crs",
+        default="4326,2229",
+        help="Comma-separated EPSG codes to write in addition to the native CRS",
+    )
     args = parser.parse_args()
 
     # ---------- Load model ---------------------------------------------------
@@ -147,6 +152,14 @@ def main() -> None:
     gdf = pixel_df_to_geo(pd.concat(dfs, ignore_index=True))
     gdf.to_file(args.out, driver="GeoJSON")
     print(f"[OK] Wrote {len(gdf)} detections → {args.out}")
+
+    if args.extra_crs:
+        codes = [int(c.strip()) for c in args.extra_crs.split(",") if c.strip()]
+        stem, ext = os.path.splitext(args.out)
+        for code in codes:
+            out_path = f"{stem}_{code}{ext}"
+            gdf.to_crs(epsg=code).to_file(out_path, driver="GeoJSON")
+            print(f"[OK] Re-projected to EPSG:{code} → {out_path}")
 
 
 # -----------------------------------------------------------------------------
