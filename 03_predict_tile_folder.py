@@ -44,7 +44,7 @@ def predict_single_tile(
     tif_path: str,
     patch_size: int,
     patch_overlap: float,
-    iou_threshold: float = 0.15,
+    iou_threshold: float = 0.5,  # Increased for thightly packed crowns
 ) -> Optional[pd.DataFrame]:
     """
     Run DeepForest on one tile and return its raw prediction DataFrame
@@ -98,10 +98,14 @@ def main() -> None:
     parser.add_argument("--tile_dir", required=True, help="Folder of .tif tiles")
     parser.add_argument("--out", required=True, help="Output GeoJSON file")
 
-    parser.add_argument("--patch_size", type=int, default=1024)
-    parser.add_argument("--overlap", type=float, default=0.10)
-    parser.add_argument("--nms_thresh", type=float, default=0.40)
-    parser.add_argument("--score_thresh", type=float, default=0.20)
+    parser.add_argument(
+        "--patch_size", type=int, default=800
+    )  # 600-800 px is a good compromise for 10 cm GSD
+    parser.add_argument("--overlap", type=float, default=0.25)
+    parser.add_argument(
+        "--nms_thresh", type=float, default=0.25
+    )  # How aggressive Non-Max Suppression is lower is more aggressive
+    parser.add_argument("--score_thresh", type=float, default=0.5)
     parser.add_argument(
         "--extra_crs",
         default="4326,2229",
