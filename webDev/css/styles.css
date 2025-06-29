@@ -10978,7 +10978,6 @@ html {
 body {
   letter-spacing: 0.0625em;
 }
-
 #mainNav {
   min-height: 3.5rem;
   background-color: #fff;
@@ -11015,12 +11014,12 @@ body {
     transition: background-color 0.3s ease-in-out;
   }
   #mainNav .navbar-brand {
-    
+    padding-left: 2rem;
     color: rgba(255, 255, 255, 1);
   }
   #mainNav .nav-link {
     transition: none;
-    padding: 2rem 1.5rem;
+    padding: 1.5rem 1.5rem;
     color: rgba(255, 255, 255, 1);
   }
   #mainNav .nav-link:hover {

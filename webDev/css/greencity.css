@@ -3,21 +3,26 @@
     height: calc(100vh - 100px);
 }
 
-#loading{
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    z-index: 9999;
-    display: none;
+#loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1em 2em;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 2em;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
 
+.model-loading-text {
+  margin-left: 4px;
+  font-size: 0.9em;
+  color: #666;
+}
 
 
 .model-symbol {
@@ -51,7 +56,7 @@
     position: absolute;
     top: 20px;
     left: 35px;
-    width: calc(100vw * 0.125);
+    width: calc(100vw * 0.18);
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #ccc;
     border-radius: 6px;
