@@ -3,6 +3,7 @@
     height: calc(100vh - 100px);
 }
 
+
 #loading {
   position: absolute;
   top: 50%;
@@ -35,6 +36,31 @@
   flex-shrink: 0;
 }
 
+#loading{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    z-index: 9999;
+    display: none;
+}
+
+
+
+
+.model-symbol {
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: middle;
+  border: 1px solid #333;
+
+}
+
 #infoBox {
     position: absolute;
     top: 10px;
@@ -45,7 +71,9 @@
     border: 1px solid #666;
     border-radius: 4px;
     font-family: Arial, sans-serif;
+
     font-size: 1em;
+    font-size: 1.3em;
     box-shadow: 0 0 6px rgba(0,0,0,0.3);
     text-align: left;
     width: 300px;
@@ -54,13 +82,19 @@
 .infoText{
     padding-bottom: 1em;
     font-size: 1.3em;
+
 }
 
 #sidebar {
     position: absolute;
+
     top: 10px;
     left: 18px;
     width: calc(100vw * 0.18 -10);
+
+    top: 20px;
+    left: 35px;
+    width: calc(100vw * 0.125);
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -84,10 +118,18 @@
     margin-bottom: 10px;
 }
 
+
 #legend {
   position: absolute;
   bottom: 20px;
   right: 10px;
+}
+
+#legend {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+
   background: white;
   padding: 10px;
   font-size: 12px;
@@ -184,4 +226,5 @@
 .leaflet-top.leaflet-left .leaflet-control {
   margin-top: 0ch;
   margin-left: 0px;
+
 }

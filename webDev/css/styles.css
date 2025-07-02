@@ -10978,6 +10978,10 @@ html {
 body {
   letter-spacing: 0.0625em;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4f4d12569fe8387972f3bb2243e2ff74e59d2ff1
 #mainNav {
   min-height: 3.5rem;
   background-color: #fff;
@@ -11014,12 +11018,20 @@ body {
     transition: background-color 0.3s ease-in-out;
   }
   #mainNav .navbar-brand {
+<<<<<<< HEAD
     padding-left: 2rem;
+=======
+    
+>>>>>>> 4f4d12569fe8387972f3bb2243e2ff74e59d2ff1
     color: rgba(255, 255, 255, 1);
   }
   #mainNav .nav-link {
     transition: none;
+<<<<<<< HEAD
     padding: 1.5rem 1.5rem;
+=======
+    padding: 2rem 1.5rem;
+>>>>>>> 4f4d12569fe8387972f3bb2243e2ff74e59d2ff1
     color: rgba(255, 255, 255, 1);
   }
   #mainNav .nav-link:hover {

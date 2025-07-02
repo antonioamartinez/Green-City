@@ -9,16 +9,23 @@
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+<<<<<<< HEAD
         <script src="js/2010_Census_Blocks.js"></script>
         
         <!--script src="js/training.js"></script-->
         <!--script src="js/cv60cm.js"></script-->
+=======
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="js/2010_Census_Blocks.js"></script>
+        <script src="js/census_merged.js"></script>
+>>>>>>> 4f4d12569fe8387972f3bb2243e2ff74e59d2ff1
         <link href="css/greencity.css" rel="stylesheet" />
         <!-- Google fonts-->
         <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
+<<<<<<< HEAD
         <!--link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/-->
@@ -34,6 +41,20 @@
      <!--script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script--> 
      <script src="js/turf.min.js"></script> 
      
+=======
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>  
+    <script src="https://unpkg.com/leaflet-path-drag"></script>
+    <script src="https://unpkg.com/leaflet-editable@1.2.0/src/Leaflet.Editable.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script> 
+
+>>>>>>> 4f4d12569fe8387972f3bb2243e2ff74e59d2ff1
      <!--link href="css/leaflet.css" rel="stylesheet" /-->
         <!--script src="js/leaflet.js"></script-->
 
@@ -117,6 +138,7 @@
                     <div id="map">
                         <div id="sidebar">
                              <div class="sidebarmenu">Tree Detection Model</div>
+<<<<<<< HEAD
                              <div class="label-row">
                                 <label><input type="checkbox" name="model" value="training" checked="checked"> Street Trees</label>
                                 
@@ -178,6 +200,11 @@
                                 <span class="model-symbol"></span>
                             </div>
                             
+=======
+                             <label><input type="checkbox" name="model" value="training" checked > Training Set<span class="model-symbol"></span></label>
+                             <label><input type="checkbox" name="model" value="baseline" > Baseline<span class="model-symbol"></span></label>
+                            <label><input type="checkbox" name="model" value="deepforest" >  Deep Forest<span class="model-symbol"></span></label>
+>>>>>>> 4f4d12569fe8387972f3bb2243e2ff74e59d2ff1
                              
                                 <hr>
                              <div class="sidebarmenu">Area Selection</div>
@@ -196,6 +223,7 @@
                             <h4>Tree Benefits</h4>
                             <div class="infoText"><b>How Much CO2 Does A Tree Absorb?</b></div>
                             <div class="infoText">On average, each tree obsorbs 10 kilograms/22 pounds of CO2 per year</div>
+<<<<<<< HEAD
                             <br>
                                 <span class="tooltip-wrapper">
                                     <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
@@ -203,6 +231,8 @@
                                         CO2 info
                                     </div>
                                 </span>
+=======
+>>>>>>> 4f4d12569fe8387972f3bb2243e2ff74e59d2ff1
                             <hr>
                             <div class="infoText"><b>How much pollutant (PM₂.₅) can a tree remove?</b></div>
                             <div class="infoText">An urban tree removes 0.015 kg (15 g) PM₂.₅ pollutant per year</div>
@@ -212,6 +242,7 @@
                         <div id="loading">Loading...</div>
 
                     </div>
+<<<<<<< HEAD
                     <script src="js/greencity.js"></script>
                     <script language="javascript">
                         initSideBar();
@@ -220,6 +251,854 @@
                         loadingModel();
                         processLoadingDoc();  
                     </script>   
+=======
+
+<script language="javascript">
+const infoBoxDefaultHTML = `
+  <h4>Tree Benefits</h4>
+  <div class="infoText"><b>How Much CO2 Does A Tree Absorb?</b></div>
+  <div class="infoText">On average, each tree absorbs 10 kilograms/22 pounds of CO2 per year</div>
+  <hr>
+  <div class="infoText"><b>How much pollutant (PM₂.₅) can a tree remove?</b></div>
+  <div class="infoText">An urban tree removes 0.015 kg (15 g) PM₂.₅ pollutant per year</div>
+`;
+
+document.getElementById("infoBox").innerHTML = infoBoxDefaultHTML;
+
+const sidebar = document.getElementById('sidebar');
+
+sidebar.addEventListener('mouseenter', () => {
+    isPointerOnSidebar = true;
+});
+
+sidebar.addEventListener('mouseleave', () => {
+    isPointerOnSidebar = false;
+});
+
+// Get map view and map view selection
+const baseLayers = {
+  satellite: L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+      attribution: 'Tiles © Esri',
+      maxZoom: 19 
+    }
+  ),
+  streets: L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19 
+    }
+  ),
+  terrain: L.tileLayer(
+    "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+      attribution: '© OpenTopoMap contributors',
+      maxZoom: 17 // 👈 prevent requests to non-existent zoom 18+
+    }
+  )
+};
+function showLoading() {
+    document.getElementById('loading').style.display = 'block';
+}
+
+function hideLoading() {
+    document.getElementById('loading').style.display = 'none';
+}
+
+window.addEventListener('load', function() {
+    document.getElementById('loading').style.display = 'none';
+});
+
+const map = L.map("map", {
+        center: [34.156113, -118.131943],
+        zoom: 13,
+        zoomControl: true, 
+        editable: true, // Required for Leaflet.Editable
+    });
+
+document.querySelectorAll('input[name="mapView"]').forEach(input => {
+    input.addEventListener('change', (e) => {
+        const selected = e.target.value;
+
+        // Remove all other base layers
+        Object.values(baseLayers).forEach(layer => {
+        if (map.hasLayer(layer)) {
+            map.removeLayer(layer);
+        }
+        });
+
+        // Add the selected one
+        baseLayers[selected].addTo(map);
+        if (selected === 'terrain' && map.getZoom() > 17) {
+            map.setZoom(17);
+  }
+
+    });
+});
+/*L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    minZoom: 12,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+*/
+
+let selectionRect = null;     
+const infoBox = document.getElementById('infoBox');
+boxInfo = {}
+
+function updateInfoBox(feature, selectedPoints, numModel) {
+    const areaSqMeters = turf.area(feature);  // Turf requires GeoJSON Feature
+    const areaAcres = areaSqMeters / 4046.8564224;
+    const hectare = areaAcres / 2.47105 
+    //const pointCount = selectedPoints.features.filter(f => f.geometry.type === "Point").length;
+    const pointCount = selectedPoints.features.length/numModel;
+    //const hectares = acres * 0.404686;
+    const density = pointCount / hectare;
+
+    htmlOut = `<h4>Selected Area</h4>`;
+    htmlOut += `<div class="infoText">Area: ${areaAcres.toFixed(0)} Acre<br>`;
+    htmlOut += `Model Selected: ${numModel}<br>`;
+    htmlOut += `Avg Tree Count: ${pointCount.toFixed(0)}<br>`;
+    htmlOut += `Density: ${density.toFixed(0)}<br>`;
+    htmlOut += `<div><hr></div>`;
+
+    const totalCO2_kg = pointCount * 10;
+    const totalCO2_tonnes = totalCO2_kg / 1000;
+
+    htmlOut += `<div class="infoText">The selected area absorbed a total of ${totalCO2_kg.toFixed(2)} kg (${totalCO2_tonnes.toFixed(2)} tonnes) CO₂ per year</div>`;
+    htmlOut += `<div><hr></div>`;
+
+    const PM25_per_tree_kg = 0.015;
+
+    const total_pm25_kg = pointCount * PM25_per_tree_kg;
+    const total_pm25_tonnes = total_pm25_kg / 1000;
+
+    htmlOut += `<div class="infoText">The selected area removed approximately ${total_pm25_kg.toFixed(2)} kg (${total_pm25_tonnes.toFixed(4)} tonnes)  pollution (PM₂.₅) per year</div>`;
+
+    infoBox.innerHTML = htmlOut;
+
+//How Much CO2 Does A Tree Absorb?
+        //average value of 10 kilograms/22 pounds per tree per year
+    //https://onetreeplanted.org/blogs/stories/how-much-co2-does-tree-absorb?utm_source=chatgpt.com
+
+    /*
+    Tree Density
+    City trees per hectare
+    https://wfpquantum.s3.amazonaws.com/pdf/2021/63937_State%20of%20the%20Urban%20Forest%20April%202021.pdf?utm_source=chatgpt.com
+    
+    City trees per hectare
+    < 25; 26–50; 51-75; 76-100; >100
+    */
+    
+    /*
+    Air Quality
+    AQI
+    https://en.wikipedia.org/wiki/Air_quality_index?utm_source=chatgpt.com
+    i‑Tree Eco estimates pollutant removal (PM₂.₅, NO₂, O₃, SO₂, CO), expressed in grams per m² of canopy or kg per hectare per year, using local weather and air data
+    
+    1 urban tree removes on average:
+    0.015 kg (15 g) PM₂.₅ per year
+    One hectare of U.S.
+    urban tree cover averages about 67 kg of pollution removal per year (Nowak
+    et al. 2014)
+    */
+}
+
+/*
+ *  Model select base on GeoJson of the tree points against census blocks
+ */
+
+ // color of each census block base on tree density
+function getDensityColor(d) {
+  return d > 25  ? '#0c2e13' :
+         d > 20  ? '#0e6920' :
+         d > 15  ? '#198a2c':
+         d > 10  ? '#29ba3a':
+         d > 5   ? '#6af73b' :
+         d > 1   ? '#b7fc47':
+         d > 0   ? '#fcf347':
+                   '#fc9d30';
+}
+
+function addLegend() {
+  const legend = document.getElementById('legend');
+  const grades = [0, 1, 5, 10, 15, 20, 25];
+
+  let html = `<strong>Tree Density <br>in census block<br>(trees/ha)</strong><br><br>`;
+  for (let i = grades.length - 1; i >= 0; i--) {
+    const from = grades[i];
+    const to = grades[i + 1];
+    const label = to ? `${from}-${to}` : `> ${from}`;
+    html += `
+      <div>
+        <span style="background:${getDensityColor(from)}"></span>${label}
+      </div>`;
+  }
+
+  legend.innerHTML = html;
+}
+
+addLegend();
+
+
+function interpolateColor(color1, color2, factor) {
+    const c1 = parseInt(color1.slice(1), 16);
+    const c2 = parseInt(color2.slice(1), 16);
+
+    const r1 = (c1 >> 16) & 0xff, g1 = (c1 >> 8) & 0xff, b1 = c1 & 0xff;
+    const r2 = (c2 >> 16) & 0xff, g2 = (c2 >> 8) & 0xff, b2 = c2 & 0xff;
+
+    const r = Math.round(r1 + factor * (r2 - r1));
+    const g = Math.round(g1 + factor * (g2 - g1));
+    const b = Math.round(b1 + factor * (b2 - b1));
+
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+function ShapeOptions(feature) {
+  const density = feature.properties.density || 0; // if already computed
+  //alert(density);
+    //const factor = (3 - 1) / (26 - 1);
+  return {
+    
+    fillColor: getDensityColor(density),
+    //fillColor: interpolateColor('#0d3614', '#c98422', factor),
+    weight: 1,
+    color: "#888",
+    fillOpacity: 0.5
+  };
+}
+
+const hoverStyle = {
+    color: "#fff",
+    weight: 3,
+    fillOpacity: 0.5
+};
+
+const clickBorderStyle = {
+    weight: 2,
+    color: "#fff", 
+    fillOpacity: 0.5
+};
+
+const blankBlock = {
+    fillColor: "#b8fca7",
+    weight: 1,
+    fillOpacity: 0.3
+};
+
+
+let toolon = "blocks"; // default
+let polygonLayer = null;
+let selectedLayer = null; // Track clicked layer
+let selectedBlockFeature = null;
+const activeModels = new Set();
+
+const modelData = {
+    "baseline": {
+        polygon: census_blocks_with_prediction,
+        trees: prediction_trees,
+        type: "pt",
+        color: "#f7b283",
+        size: 3,
+        layer: null  // add this!
+    },
+    "training": {
+        polygon: census_blocks_with_street,
+        trees: street_row_trees,
+        type: "pt",
+        size: 3,
+        color: "#7dc7ff",
+        layer: null
+    },
+    "deepforest": {
+        polygon: census_blocks_deep_forest,
+        trees: deep_forest,
+        type: "box",
+        size: 3,
+        color: "#f3f7cb",
+        layer: null
+    }
+};
+
+function createCircleMarker(feature, latlng) {
+    const model = feature.properties.model;
+    const modelStyle = modelData[model];
+
+    const size = modelStyle.size || 2;
+    const color = modelStyle.color || "#cccccc";
+
+    return L.circleMarker(latlng, {
+        radius: size,
+        fillColor: color,
+        color: "#333333",
+        weight: 0.5,
+        opacity: 1,
+        fillOpacity: 1
+    });
+}
+                     
+function removeCircleMarker(){
+    map.eachLayer(function (l) {
+        if (l instanceof L.CircleMarker) {
+            map.removeLayer(l);
+        }
+    });
+}
+
+function showTrees(blockFeature) {
+    // Only run if current tool is "blocks" and block is selected
+    if (toolon !== "blocks" || !selectedLayer) {
+        return;
+    }
+
+    // Remove all previous filtered layers for active models
+    activeModels.forEach(model => {
+        const data = modelData[model];
+        if (data.layer && map.hasLayer(data.layer)) {
+            map.removeLayer(data.layer);
+            data.layer = null;
+        }
+    });
+
+
+    // If no models are active, don't draw anything
+    if (activeModels.size === 0) return;
+
+    const blockPolygon = turf.feature(blockFeature.geometry);
+
+    let combinedFeatures = []; 
+
+    activeModels.forEach(model => {
+        const data = modelData[model];
+        if (!data || !data.trees) return;
+
+        let filteredGeoJSON = null;
+
+        if (data.type === "pt") {
+            const filtered = turf.pointsWithinPolygon(data.trees, blockPolygon);
+            if (filtered.features.length === 0) return;
+
+            // Inject model name
+            filtered.features.forEach(f => {
+                f.properties.model = model;
+            });
+
+            filteredGeoJSON = filtered;
+
+            data.layer = L.geoJSON(filteredGeoJSON, {
+                pointToLayer: createCircleMarker
+            }).addTo(map);
+
+        } else if (data.type === "box") {
+            const centroids = {
+                type: "FeatureCollection",
+                features: data.trees.features.map(feature => {
+                    const center = turf.centroid(feature);
+                    center.properties.parent = feature;
+                    return center;
+                })
+            };
+
+            const filteredPoints = turf.pointsWithinPolygon(centroids, blockPolygon);
+            if (filteredPoints.features.length === 0) return;
+
+            const filteredPolygons = {
+                type: "FeatureCollection",
+                features: filteredPoints.features.map(f => {
+                    const poly = f.properties.parent;
+                    poly.properties.model = model;  // Inject model here
+                    return poly;
+                })
+            };
+
+
+            filteredGeoJSON = filteredPolygons;
+
+            data.layer = L.geoJSON(filteredGeoJSON, {
+                style: function(feature) {
+                    const model = feature.properties.model;
+                    const modelStyle = modelData[model];
+                    return {
+                        color: modelStyle.color,
+                        weight: modelStyle.size || 2,
+                        fillOpacity: 0.1
+                    };
+                }
+            }).addTo(map);
+        }// if box
+        combinedFeatures = combinedFeatures.concat(filteredGeoJSON.features);
+        
+    });
+
+
+    const combinedFeatureCollection = {
+        type: "FeatureCollection",
+        features: combinedFeatures
+    };
+
+    updateInfoBox(blockFeature, combinedFeatureCollection, activeModels.size);
+}
+
+
+polygonLayer = L.geoJSON(census_block, {
+    style: blankBlock,  // initial neutral style, will be updated dynamically
+    onEachFeature: (feature, layer) => {
+        layer.on('click', () => {
+            if (toolon !== "blocks") return;
+
+            if (selectedLayer && selectedLayer !== layer) {
+                selectedLayer.setStyle(
+                    activeModels.size === 0
+                        ? blankBlock
+                        : ShapeOptions(selectedLayer.feature)
+                );
+            }
+
+            layer.setStyle(clickBorderStyle);
+            selectedLayer = layer;
+            selectedBlockFeature = feature;
+             showTrees(feature); 
+        });
+
+        layer.on('mouseover', () => {
+            if (toolon !== "blocks") return;
+            if (layer !== selectedLayer) {
+                layer.setStyle(
+                    activeModels.size === 0 ? blankBlock : hoverStyle
+                );
+            }
+        });
+
+        layer.on('mouseout', () => {
+            if (toolon !== "blocks") return;
+            if (layer !== selectedLayer) {
+                layer.setStyle(
+                    activeModels.size === 0
+                        ? blankBlock
+                        : ShapeOptions(feature)
+                );
+            }
+        });
+    }
+}).addTo(map);
+
+
+
+function updatePolygonStyle() {
+    const numModels = activeModels.size;
+    
+    if (numModels === 0) {
+        // No models selected, reset styles
+        polygonLayer.setStyle(blankBlock);
+        return;
+    }
+    const layers = polygonLayer.getLayers();
+    //activeModels.forEach(model => {alert(model)});
+    layers.forEach(layer => {
+        const objectId = layer.feature.properties.OBJECTID;
+        if (objectId === undefined) {
+            console.warn("Feature missing OBJECTID:", layer.feature);
+            return;
+        }
+
+        let totalDensity = 0;
+        let count = 0;
+
+        activeModels.forEach(model => {
+            const modelFeatures = modelData[model].polygon.features;
+            const matchingFeature = modelFeatures.find(f => f.properties.OBJECTID === objectId);
+            if (matchingFeature && typeof matchingFeature.properties.density === "number") {
+                totalDensity += matchingFeature.properties.density;
+                count++;
+            }
+        });
+
+        const avgDensity = count > 0 ? totalDensity / count : 0;
+        layer.feature.properties.density = avgDensity;
+    });
+
+    polygonLayer.setStyle(feature => ShapeOptions(feature));
+    
+}
+
+
+
+function updateVisiblePoints() {
+    if (!selectionRect || (toolon !== "rectangle" && toolon !== "street")) {
+        // No selection rectangle or wrong tool
+        activeModels.forEach(model => {
+            const data = modelData[model];
+            if (data.layer && map.hasLayer(data.layer)) {
+                map.removeLayer(data.layer);
+                data.layer = null;
+            }
+        });
+        return;
+    }
+
+    const rectBounds = selectionRect.getBounds();
+    const turfPoly = turf.polygon([[
+        [rectBounds.getWest(), rectBounds.getSouth()],
+        [rectBounds.getEast(), rectBounds.getSouth()],
+        [rectBounds.getEast(), rectBounds.getNorth()],
+        [rectBounds.getWest(), rectBounds.getNorth()],
+        [rectBounds.getWest(), rectBounds.getSouth()]
+    ]]);
+
+    // Remove previous layers
+    activeModels.forEach(model => {
+        const data = modelData[model];
+        if (data.layer && map.hasLayer(data.layer)) {
+            map.removeLayer(data.layer);
+            data.layer = null;
+        }
+    });
+
+    if (activeModels.size === 0) return;
+
+    let combinedFeatures = [];  // top of function
+    activeModels.forEach(model => {
+        const data = modelData[model];
+        if (!data || !data.trees) return;
+
+        let filteredGeoJSON = null;
+
+        if (data.type === "pt") {
+            const filtered = {
+                type: "FeatureCollection",
+                features: data.trees.features.filter(pt =>
+                    turf.booleanPointInPolygon(pt, turfPoly)
+                )
+            };
+
+            if (filtered.features.length === 0) return;
+
+            filtered.features.forEach(f => {
+                f.properties.model = model;
+            });
+
+            filteredGeoJSON = filtered;
+
+            data.layer = L.geoJSON(filteredGeoJSON, {
+                pointToLayer: createCircleMarker
+            }).addTo(map);
+
+        } else if (data.type === "box") {
+            const centroids = {
+                type: "FeatureCollection",
+                features: data.trees.features.map(feature => {
+                    const center = turf.centroid(feature);
+                    center.properties.parent = feature;
+                    return center;
+                })
+            };
+
+            const filteredPoints = turf.pointsWithinPolygon(centroids, turfPoly);
+            if (filteredPoints.features.length === 0) return;
+
+            const filteredPolygons = {
+                type: "FeatureCollection",
+                features: filteredPoints.features.map(f => {
+                    const poly = f.properties.parent;
+                    poly.properties.model = model;
+                    return poly;
+                })
+            };
+
+            filteredGeoJSON = filteredPolygons;
+
+            data.layer = L.geoJSON(filteredGeoJSON, {
+                style: function(feature) {
+                    const model = feature.properties.model;
+                    const modelStyle = modelData[model];
+                    return {
+                        color: modelStyle.color,
+                        weight: modelStyle.size || 2,
+                        fillOpacity: 0.1
+                    };
+                }
+            }).addTo(map);
+        }// if box
+        combinedFeatures = combinedFeatures.concat(filteredGeoJSON.features);
+
+    });
+    const combinedFeatureCollection = {
+        type: "FeatureCollection",
+        features: combinedFeatures
+    };
+
+    updateInfoBox(turfPoly, combinedFeatureCollection, activeModels.size);
+}
+
+    
+
+function genMapViewRect() {
+    if (selectionRect) {
+        map.removeLayer(selectionRect);
+    }
+    const bounds = map.getBounds();
+    selectionRect = L.rectangle(bounds); // Not added to map
+}
+
+const MAX_WIDTH = 0.02;  // degrees
+const MAX_HEIGHT = 0.02; // degrees
+
+function genRec(center) {
+    const offsetLat = 0.00286;  // ≈ 317 meters
+    const offsetLng = 0.00345;  // ≈ 317 meters
+
+    const bounds = L.latLngBounds(
+        [center.lat - offsetLat, center.lng - offsetLng],
+        [center.lat + offsetLat, center.lng + offsetLng]
+    );
+
+    // Update existing rectangle
+    if (selectionRect) {
+        selectionRect.setBounds(bounds);
+    } else {
+        selectionRect = L.rectangle(bounds, {
+            color: '#fff',
+            weight: 3,
+            fillOpacity: 0.1,
+            draggable: true
+        }).addTo(map);
+
+        selectionRect.dragging.enable();
+        selectionRect.on('dragend', () => {updateVisiblePoints();});
+        selectionRect.on("editable:dragend", updateVisiblePoints);
+
+        // Minimal fallback:
+        map.on("zoomend", updateVisiblePoints); // Update on zoom if dragging isn't available
+    }
+}
+function onMapMoveOrZoom() {
+    genMapViewRect();
+    updateVisiblePoints();
+}
+
+function waitForZoomThenRun(targetZoom, callback) {
+  if (map.getZoom() !== targetZoom) {
+    map.once("zoomend", callback);
+    map.setZoom(targetZoom);
+  } else {
+    callback(); // already at target zoom, just run it
+  }
+}
+
+function onMapClickRectangle(e) {
+    if (toolon !== "rectangle") return;
+
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && sidebar.contains(e.originalEvent.target)) {
+        // Click was inside sidebar — ignore
+        return;
+    }
+
+    const center = e.latlng;
+    genRec(center);
+    updateVisiblePoints();
+}
+
+function handleToolChange(tool) {
+    removeCircleMarker();
+    toolon = tool
+    // Remove existing rectangle
+    if (selectionRect) {
+        map.removeLayer(selectionRect);
+        selectionRect = null;
+    }
+
+    // Remove old click handler
+    map.off("zoomend", onMapMoveOrZoom);
+    map.off("moveend", onMapMoveOrZoom);
+
+    if (toolon !== "blocks" && selectedLayer) {
+        selectedLayer.setStyle(ShapeOptions(selectedLayer.feature));
+        selectedLayer = null;
+    }
+
+    if (tool === 'blocks') {
+        const center = [34.156113, -118.131943];
+        map.zoomControl.enable(); 
+        map.options.minZoom = 0;
+        map.options.maxZoom = 24;
+
+        
+        map.on("zoomend", () => {
+            if (isPointerOnSidebar) return;  // Ignore if over sidebar
+            if (toolon === "blocks" && selectedLayer) {
+                showTrees(selectedLayer.feature);
+            }
+        });
+
+        map.on("moveend", () => {
+            if (isPointerOnSidebar) return;  // Ignore if over sidebar
+            if (toolon === "blocks" && selectedLayer) {
+                showTrees(selectedLayer.feature);
+            }
+        });
+        //map.setView(center, 13);
+        updateVisiblePoints()
+    } 
+    else if (tool === 'rectangle') {
+        map.setZoom(15);
+        map.zoomControl.enable();
+        map.options.minZoom = 0;
+        map.options.maxZoom = 24;
+
+        const center = map.getCenter();
+        genRec(center);
+        updateVisiblePoints();
+
+        // Remove any previous zoom listener and re-add
+        map.off("zoomend", updateVisiblePoints);
+        map.on("zoomend", updateVisiblePoints);
+
+        // Remove any previous click listener for rectangle tool and re-add
+        map.off("click", onMapClickRectangle);
+        map.on("click", onMapClickRectangle);
+    }
+    else if (tool === "street") {
+        const fixedZoom = 18;
+        map.zoomControl.disable();
+        map.options.minZoom = fixedZoom;
+        map.options.maxZoom = fixedZoom;
+
+        waitForZoomThenRun(fixedZoom, () => {
+            genMapViewRect();         // now safe to generate selection
+            onMapMoveOrZoom();        // update visible points
+            map.on("moveend", onMapMoveOrZoom); // bind dynamic update
+        });
+    }
+
+    if (tool === 'blocks' && selectedBlockFeature) {
+        showTrees(selectedBlockFeature); // re-render tree points inside block
+    }
+
+}
+
+
+function addModelLayer(model) {
+    const data = modelData[model];
+    if (!data) return;
+
+    if (activeModels.has(model)) return;
+
+    activeModels.add(model);
+
+    // If current tool is "blocks" and a block is selected, update trees
+    if (toolon === "blocks" && selectedLayer) {
+        showTrees(selectedLayer.feature);
+    }
+    updatePolygonStyle()
+}
+
+function removeModelLayer(model) {
+    const data = modelData[model];
+    if (!data) return;
+
+    activeModels.delete(model);
+
+    if (data.layer && map.hasLayer(data.layer)) {
+        map.removeLayer(data.layer);
+        data.layer = null;
+    }
+
+    // If current tool is "blocks" and a block is selected, update trees
+    if (toolon === "blocks" && selectedLayer) {
+        showTrees(selectedLayer.feature);
+    }
+    updatePolygonStyle()
+}
+// Automatically toggle when radio button changes
+document.querySelectorAll('input[name="tool"]').forEach(input => {
+    input.addEventListener('change', (e) => {
+            handleToolChange(e.target.value);
+    });
+});
+
+
+// Trigger default on load and initialize all variables
+                    
+window.addEventListener('DOMContentLoaded', () => {
+    const groups = ["model", 'tool', 'mapView'];
+
+    groups.forEach(name => {
+        const radios = document.querySelectorAll(`input[name="${name}"]`);
+        radios.forEach(radio => (radio.checked = false)); // Clear all first
+
+        // Find the one with checked attribute in HTML and set checked true to force sync
+        const defaultRadio = document.querySelector(`input[name="${name}"][checked]`);
+        if (defaultRadio) {
+            defaultRadio.checked = true;
+        }
+    });
+    
+    // Load initial dataset
+    map.setZoom(13);
+    baseLayers.satellite.addTo(map); // default view
+    
+
+
+    document.querySelectorAll('input[name="model"]').forEach(cb => {
+
+        const model = cb.value;
+        const span = cb.parentElement.querySelector('.model-symbol');
+        const data = modelData[model];
+        if (data && span ) {
+            span.style.width = `${data.size * 3}px`;
+            span.style.height = `${data.size * 3}px`;
+            span.style.borderRadius = data.type === "pt" ? "50%" : "0";  // force square corners
+            span.style.backgroundColor = data.color;
+            span.style.border = '1px solid #333';
+        }   
+        if (cb.value === "training") {
+            cb.checked = true;
+            activeModels.add("training");
+        } else {
+            cb.checked = false;
+            activeModels.delete(cb.value);
+        }
+    
+        cb.addEventListener('change', function () {
+            const model = this.value; // "training", "baseline", or "deepforest"
+            
+
+            if (this.checked) {
+                addModelLayer(model);
+            } else {
+                removeModelLayer(model);
+            }
+            if (activeModels.size === 0){
+                document.getElementById("infoBox").innerHTML = infoBoxDefaultHTML;
+            }
+            // Update visible points if tool is rectangle or streetMore actions
+            if (toolon === "rectangle" || toolon === "street") {
+                //alert("here")
+                updateVisiblePoints();
+            }
+            // Also handle blocks tool if needed
+            if (toolon === "blocks" && selectedBlockFeature) {
+                showTrees(selectedBlockFeature);
+            }
+        });
+    });
+});
+
+let isPointerOnSidebar = false;
+
+
+
+document.querySelector('input[name="model"][value="training"]').checked = true;
+addModelLayer("training");
+document.querySelector('input[name="tool"][value="blocks"]').checked = true;
+
+handleToolChange(document.querySelector('input[name="tool"]:checked').value);
+
+                
+                    </script>   
+
+
+>>>>>>> 4f4d12569fe8387972f3bb2243e2ff74e59d2ff1
                 </div>
             </div>        
 
@@ -364,7 +1243,11 @@
         <!-- * *                               SB Forms JS                               * *-->
         <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
         <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+<<<<<<< HEAD
         <!--script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script-->
         <script src="js/sb-forms-0.4.1.js"></script>
+=======
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+>>>>>>> 4f4d12569fe8387972f3bb2243e2ff74e59d2ff1
     </body>
 </html>
