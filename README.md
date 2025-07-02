@@ -44,6 +44,8 @@ Acquired 10cm aerial imagery from Los Angeles County ArcGIS archive
 
 Achieved improved performance with hyper tuning, though overlapping trees posed challenges
 
+Implemented a comprehensive image handling pipeline that supports map chip generation, cv-based image enhancement, and mosaic creation.
+
 Merged overlapping crown predictions using Shapely geometry tools
 
 🗺️ The Map Interface
