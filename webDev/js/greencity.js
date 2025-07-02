@@ -157,7 +157,7 @@ function updateInfoBox(feature, selectedPoints, numModel) {
   htmlOut += `Model Selected: ${numModel}<br>`;
   htmlOut += `Avg Tree Count: ${avgTreeCount.toFixed(0)}<br>`;
   htmlOut += `Density: ${avgDensity.toFixed(2)} (count/hectare)<br>`;
-  htmlOut += `<div><hr></div>`;
+  htmlOut += `</div><hr>`;
 
   // CO₂ (kg and tonnes)
   const totalCO2_kg = avgTreeCount * 10;
