@@ -26,10 +26,13 @@
 
 
 .model-symbol {
+  width: 0.8em;
+  height: 0.8em;
   display: inline-block;
-  margin-left: 6px;
-  vertical-align: middle;
+  border-radius: 50%;
   border: 1px solid #333;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 #infoBox {
@@ -42,7 +45,7 @@
     border: 1px solid #666;
     border-radius: 4px;
     font-family: Arial, sans-serif;
-    font-size: 1.3em;
+    font-size: 1em;
     box-shadow: 0 0 6px rgba(0,0,0,0.3);
     text-align: left;
     width: 300px;
@@ -50,13 +53,14 @@
 
 .infoText{
     padding-bottom: 1em;
+    font-size: 1.3em;
 }
 
 #sidebar {
     position: absolute;
-    top: 20px;
-    left: 35px;
-    width: calc(100vw * 0.18);
+    top: 10px;
+    left: 18px;
+    width: calc(100vw * 0.18 -10);
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -79,10 +83,11 @@
     margin-top: 0px;
     margin-bottom: 10px;
 }
+
 #legend {
   position: absolute;
   bottom: 20px;
-  right: 20px;
+  right: 10px;
   background: white;
   padding: 10px;
   font-size: 12px;
@@ -102,4 +107,81 @@
   height: 18px;
   margin-right: 8px;
   opacity: 0.8;
+}
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.tooltip-icon {
+  display: inline-block;
+  background: #41ce3e;
+  color: #5f2903;
+  border: 1px solid #000;
+  border-radius: 50%;
+  width: 0.7em;
+  height: 0.7em;
+  font-size: 1.4em;
+  text-align: center;
+  line-height: 22px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.tooltip-bubble {
+  position: absolute;
+  top: 30px;
+  left: -1.5em;
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  display: none;
+  width: 200px;
+}
+
+/* Outer arrow (border) */
+.tooltip-bubble::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 12px;
+  border-width: 0 10px 12px 10px;
+  border-style: solid;
+  border-color: transparent transparent #000 transparent;
+  z-index: 0;
+}
+
+/* Inner arrow (fill) */
+.tooltip-bubble::after {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 13px;
+  border-width: 0 9px 13px 9px;
+  border-style: solid;
+  border-color: transparent transparent #fff transparent;
+  z-index: 1;
+}
+
+.label-row {
+  display: flex;
+  align-items: center; /* aligns all items vertically centered */
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.label-row > label {
+  margin: 0;
+  flex-shrink: 1;
+}
+
+.leaflet-top.leaflet-left .leaflet-control {
+  margin-top: 0ch;
+  margin-left: 0px;
 }

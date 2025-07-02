@@ -117,26 +117,66 @@
                     <div id="map">
                         <div id="sidebar">
                              <div class="sidebarmenu">Tree Detection Model</div>
-                             <label><input type="checkbox" name="model" value="training"  disabled> Training Set
+                             <div class="label-row">
+                                <label><input type="checkbox" name="model" value="training" checked="checked"> Street Trees</label>
+                                
+                                <span class="tooltip-wrapper">
+                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
+                                    <div class="tooltip-bubble" style="display: none;">
+                                    Training dataset with labeled street trees provided by Pasadena city.
+                                    </div>
+                                </span>
+                                <span class="model-loading-text"></span>
                                 <span class="model-symbol"></span>
-                                <span class="model-loading-text">(loading...)</span>
-                            </label>
-                             <label><input type="checkbox" name="model" value="baseline" disabled> Baseline
+                            </div> 
+                            <div class="label-row">
+                                <label><input type="checkbox" name="model" value="baseline"> Tree Points (VGG 16)</label>
+
+                                <span class="tooltip-wrapper">
+                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
+                                    <div class="tooltip-bubble" style="display: none;">
+                                    Model iniciated with VGG 16.
+                                    </div>
+                                </span>
+                                <span class="model-loading-text"></span>
                                 <span class="model-symbol"></span>
-                                <span class="model-loading-text">(loading...)</span>
-                            </label>
-                            <label><input type="checkbox" name="model" value="cv60cm" disabled> CV enhanced 60cm
+                            </div>
+                            <div class="label-row">
+                            <label><input type="checkbox" name="model" value="cv60cm"> CV enhanced 60cm</label>
+
+                                <span class="tooltip-wrapper">
+                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
+                                    <div class="tooltip-bubble" style="display: none;">
+                                    Model using computer vision enhanced images(60cm/pixel)
+                                    </div>
+                                </span>
+                                <span class="model-loading-text"></span>
+                                <span class="model-symbol"></span>                               
+                            </div>
+                            <div class="label-row">
+                                <label><input type="checkbox" name="model" value="deepforest"> Canopy Boxes (DeepForest)</label>
+
+                                <span class="tooltip-wrapper">
+                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
+                                    <div class="tooltip-bubble" style="display: none;">
+                                    Detected trees using deepForest Detecting model on 60cm/pixel images
+                                    </div>
+                                </span>
+                                <span class="model-loading-text"></span>
                                 <span class="model-symbol"></span>
-                                <span class="model-loading-text">(loading...)</span>
-                            </label>
-                             <label><input type="checkbox" name="model" value="deepforest" disabled>  Deep Forest
+                            </div>
+                            <div class="label-row">
+                                <label><input type="checkbox" name="model" value="deepforest10cm"> Deep Forest 10cm</label>
+
+                                <span class="tooltip-wrapper">
+                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
+                                    <div class="tooltip-bubble" style="display: none;">
+                                    Detected trees using deepForest Detecting model on 10cm/pixel images
+                                    </div>
+                                </span>
+                                <span class="model-loading-text"></span>
                                 <span class="model-symbol"></span>
-                                <span class="model-loading-text">(loading...)</span>
-                            </label>
-                             <label><input type="checkbox" name="model" value="deepforest10cm" disabled>  Deep Forest 10cm
-                                <span class="model-symbol"></span>
-                                <span class="model-loading-text">(loading...)</span>
-                            </label>
+                            </div>
                             
                              
                                 <hr>
@@ -156,6 +196,13 @@
                             <h4>Tree Benefits</h4>
                             <div class="infoText"><b>How Much CO2 Does A Tree Absorb?</b></div>
                             <div class="infoText">On average, each tree obsorbs 10 kilograms/22 pounds of CO2 per year</div>
+                            <br>
+                                <span class="tooltip-wrapper">
+                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
+                                    <div class="tooltip-bubble" style="display: none;">
+                                        CO2 info
+                                    </div>
+                                </span>
                             <hr>
                             <div class="infoText"><b>How much pollutant (PM₂.₅) can a tree remove?</b></div>
                             <div class="infoText">An urban tree removes 0.015 kg (15 g) PM₂.₅ pollutant per year</div>

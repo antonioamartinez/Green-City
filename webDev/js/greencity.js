@@ -1,7 +1,13 @@
 const infoBoxDefaultHTML = `
-  <h4>Tree Benefits</h4>
+  <div class="sidebarmenu">Tree Benefits</div>
   <div class="infoText"><b>How Much CO2 Does A Tree Absorb?</b></div>
   <div class="infoText">On average, each tree absorbs 10 kilograms/22 pounds of CO2 per year</div>
+    <span class="tooltip-wrapper">
+        <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
+        <div class="tooltip-bubble" style="display: none;">
+            CO2 info
+        </div>
+    </span>
   <hr>
   <div class="infoText"><b>How much pollutant (PM₂.₅) can a tree remove?</b></div>
   <div class="infoText">An urban tree removes 0.015 kg (15 g) PM₂.₅ pollutant per year</div>
@@ -146,7 +152,7 @@ function updateInfoBox(feature, selectedPoints, numModel) {
   }
 
   // Build output
-  let htmlOut = `<h4>Selected Area</h4>`;
+  let htmlOut = `<div class="sidebarmenu">Selected Area</div>`;
   htmlOut += `<div class="infoText">Area: ${areaAcres.toFixed(0)} Acre<br>`;
   htmlOut += `Model Selected: ${numModel}<br>`;
   htmlOut += `Avg Tree Count: ${avgTreeCount.toFixed(0)}<br>`;
@@ -746,10 +752,12 @@ function waitForZoomThenRun(targetZoom, callback) {
 
 function onMapClickRectangle(e) {
     if (toolon !== "rectangle") return;
-
     const sidebar = document.getElementById('sidebar');
-    if (sidebar && sidebar.contains(e.originalEvent.target)) {
-        // Click was inside sidebar — ignore
+    const infoBox = document.getElementById('infoBox');
+    const target = e.originalEvent.target;
+
+    if ((sidebar && sidebar.contains(target)) ||
+        (infoBox && infoBox.contains(target))) {
         return;
     }
 
@@ -951,15 +959,29 @@ async function loadModelScriptWithCache(modelKey, db) {
 async function loadingModel() {
   const db = await openDB();
   const modelKeys = Object.keys(modelData);
-  let completed = 0; // ✅ Counter to track completed loads
+  let completed = 0;
 
   for (const modelKey of modelKeys) {
-    const label = document.querySelector(`input[value="${modelKey}"]`).parentElement;
-    const span = label.querySelector(".model-loading-text");
-    const checkbox = label.querySelector("input");
+    const row = document.querySelector(`.label-row input[value="${modelKey}"]`)?.closest('.label-row');
+    if (!row) continue;
 
-    span.textContent = " (loading...)";
+    const spanLoading = row.querySelector(".model-loading-text");
+    const checkbox = row.querySelector("input");
+    const symbol = row.querySelector(".model-symbol");
+    const data = modelData[modelKey];
+
+    if (!checkbox || !spanLoading || !symbol || !data) continue;
+
+    // Show loading
+    spanLoading.textContent = " (loading...)";
     checkbox.disabled = true;
+
+    // Update the symbol (regardless of model loaded or not)
+    symbol.style.width = `${data.size * 4}px`;
+    symbol.style.height = `${data.size * 4}px`;
+    symbol.style.borderRadius = data.type === "pt" ? "50%" : "0";
+    symbol.style.backgroundColor = data.color;
+    symbol.style.border = '1px solid #333';
 
     loadModelScriptWithCache(modelKey, db).then(m => {
       console.log(`Model ${m} loaded`);
@@ -971,21 +993,34 @@ async function loadingModel() {
         trainingCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
       }
 
-      span.textContent = "";
+      spanLoading.textContent = "";
       checkbox.disabled = false;
 
     }).catch(err => {
       console.error(err);
-      span.textContent = " (failed)";
+      spanLoading.textContent = " (failed)";
     }).finally(() => {
-      // ✅ Increase counter regardless of success or failure
       completed++;
       if (completed === modelKeys.length) {
         const loader = document.querySelector("#map #loading");
-        if (loader) loader.remove(); // or loader.style.display = "none";
+        if (loader) loader.remove();
       }
     });
   }
+}
+
+function toggleTooltip(iconEl) {
+  const bubble = iconEl.nextElementSibling;
+
+  if (!bubble) return;
+
+  // Close any other open tooltips
+  document.querySelectorAll('.tooltip-bubble').forEach(el => {
+    if (el !== bubble) el.style.display = 'none';
+  });
+
+  // Toggle current one
+  bubble.style.display = (bubble.style.display === 'block') ? 'none' : 'block';
 }
 
 function processLoadingDoc(){
@@ -1053,7 +1088,11 @@ function processLoadingDoc(){
     });
 
 
-    
+    const blocksTool = document.querySelector('input[name="tool"][value="blocks"]');
+    if (blocksTool) {
+        blocksTool.checked = true;
+        blocksTool.dispatchEvent(new Event('change', { bubbles: true }));
+    }
     document.getElementById("infoBox").innerHTML = infoBoxDefaultHTML;
     map.doubleClickZoom.disable();
     handleToolChange(document.querySelector('input[name="tool"]:checked').value);
