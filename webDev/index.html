@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Grayscale - Start Bootstrap Theme</title>
+        <title>GreenCity</title>
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -77,6 +77,40 @@
         </header>
         <!-- About-->
         <section class="about-section text-center" id="about">
+            <div class="background-layer" id="background-layer"></div>
+            <script>
+const layer = document.getElementById('background-layer');
+  const section = layer.parentElement;
+  const sectionWidth = section.offsetWidth;
+  const sectionHeight = section.offsetHeight;
+
+  const sizes = [0.8, 0.6, 0.25, 0.1, 0.3]; // 50%, 25%, 10%
+  const numCircles = 5;
+                const thirds = 5;
+  for (let i = 0; i < numCircles; i++) {
+    const sizeFactor = sizes[i];
+    const pxSize = sectionWidth * sizeFactor;
+
+    const circle = document.createElement('div');
+    circle.classList.add('circle');
+    circle.style.width = pxSize + 'px';
+    circle.style.height = pxSize + 'px';
+
+    // Determine which third this circle goes into
+    const thirdIndex = i % thirds;
+    const thirdWidth = sectionWidth / thirds;
+    const minX = thirdWidth * thirdIndex;
+    const maxX = minX + thirdWidth - pxSize;
+
+    const x = Math.random() * (maxX - minX) + minX;
+    const y = Math.random() * (sectionHeight - pxSize);
+
+    circle.style.left = x + 'px';
+    circle.style.top = y + 'px';
+
+    layer.appendChild(circle);
+  }
+</script>
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-lg-8">
@@ -177,7 +211,18 @@
                                 <span class="model-loading-text"></span>
                                 <span class="model-symbol"></span>
                             </div>
-                            
+                            <div class="label-row">
+                                <label><input type="checkbox" name="model" value="df10cmMerged"> Deep Forest Merged</label>
+
+                                <span class="tooltip-wrapper">
+                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
+                                    <div class="tooltip-bubble" style="display: none;">
+                                    Detected trees using deepForest Detecting model merging overlapped boxes on 10cm/pixel images
+                                    </div>
+                                </span>
+                                <span class="model-loading-text"></span>
+                                <span class="model-symbol"></span>
+                            </div>
                              
                                 <hr>
                              <div class="sidebarmenu">Area Selection</div>

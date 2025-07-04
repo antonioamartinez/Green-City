@@ -89,6 +89,15 @@ const modelData = {
         color: "#ac3bf7",
         layer: null
     },
+    //"deepforest10cm-merged": {
+    "df10cmMerged":{
+        polygon: null,
+        trees: null,
+        type: "box",
+        size: 3,
+        color: "#59fff1",
+        layer: null
+    },
     "cv60cm": {
         polygon: null,
         trees: null,
@@ -438,7 +447,72 @@ function initBlocks(){
         }
     }).addTo(map);
 }
-                     
+
+function getFilteredPolygons(data, turfPoly, model) {
+    // Step 1: Get centroid of each feature and link parent
+    const centroids = {
+        type: "FeatureCollection",
+        features: data.trees.features.map(feature => {
+            const center = turf.centroid(feature);
+            center.properties.parent = feature;
+            return center;
+        })
+    };
+
+    // Step 2: Find features whose centroid falls inside the given polygon
+    const filteredPoints = turf.pointsWithinPolygon(centroids, turfPoly);
+    if (filteredPoints.features.length === 0) return null;
+
+    // Step 3: Build filtered polygons from parent reference
+    let filteredPolygons = {
+        type: "FeatureCollection",
+        features: filteredPoints.features.map(f => {
+            const poly = f.properties.parent;
+            poly.properties.model = model;
+            return poly;
+        })
+    };
+
+    // Step 4: Merge polygons if type is "merged"
+    if (data.type === "merged") {
+        let merged = null;
+        for (const poly of filteredPolygons.features) {
+            if (!merged) {
+                merged = poly;
+            } else {
+                try {
+                    merged = turf.union(merged, poly);
+                    if (!merged.properties) merged.properties = {};
+                    merged.properties.model = model;
+                } catch (err) {
+                    console.warn("Error merging polygon:", err);
+                }
+            }
+        }
+
+        if (!merged) return null;
+
+        filteredPolygons = {
+            type: "FeatureCollection",
+            features: [merged]
+        };
+    }
+
+    data.layer = L.geoJSON(filteredPolygons, {
+    style: function(feature) {
+        const model = feature.properties.model;
+        const modelStyle = modelData[model];
+        return {
+            color: modelStyle.color,
+            weight: modelStyle.size || 2,
+            fillOpacity: 0.1
+        };
+    }
+    }).addTo(map);
+
+    return filteredPolygons;
+}
+ 
 /* The showTrees function works only on sensus block since it is using the blocks as the base */
 function showTrees(blockFeature) {
     // Only run if current tool is "blocks" and block is selected
@@ -484,43 +558,9 @@ function showTrees(blockFeature) {
                 pointToLayer: createCircleMarker
             }).addTo(map);
 
-        } else if (data.type === "box") {
-            const centroids = {
-                type: "FeatureCollection",
-                features: data.trees.features.map(feature => {
-                    const center = turf.centroid(feature);
-                    center.properties.parent = feature;
-                    return center;
-                })
-            };
-
-            const filteredPoints = turf.pointsWithinPolygon(centroids, blockPolygon);
-            if (filteredPoints.features.length === 0) return;
-
-            const filteredPolygons = {
-                type: "FeatureCollection",
-                features: filteredPoints.features.map(f => {
-                    const poly = f.properties.parent;
-                    poly.properties.model = model;  // Inject model here
-                    return poly;
-                })
-            };
-
-
-            filteredGeoJSON = filteredPolygons;
-
-            data.layer = L.geoJSON(filteredGeoJSON, {
-                style: function(feature) {
-                    const model = feature.properties.model;
-                    const modelStyle = modelData[model];
-                    return {
-                        color: modelStyle.color,
-                        weight: modelStyle.size || 2,
-                        fillOpacity: 0.1
-                    };
-                }
-            }).addTo(map);
-        }// if box
+        } else if (data.type === "box" || data.type === "merged") {
+           filteredGeoJSON = getFilteredPolygons(data, blockPolygon, model, map);
+        } 
         combinedFeatures = combinedFeatures.concat(filteredGeoJSON.features);
         
     });
@@ -557,7 +597,9 @@ function updatePolygonStyle() {
         let count = 0;
 
         activeModels.forEach(model => {
-            const modelFeatures = modelData[model].polygon.features;
+            const baseModelKey = model.endsWith("_merged") ? model.replace(/_merged$/, "") : model;
+            const modelFeatures = modelData[baseModelKey].polygon.features;
+            //const modelFeatures = modelData[model].polygon.features;
             const matchingFeature = modelFeatures.find(f => f.properties.OBJECTID === objectId);
             if (matchingFeature && typeof matchingFeature.properties.density === "number") {
                 totalDensity += matchingFeature.properties.density;
@@ -646,42 +688,9 @@ function updateVisiblePoints() {
                 pointToLayer: createCircleMarker
             }).addTo(map);
 
-        } else if (data.type === "box") {
-            const centroids = {
-                type: "FeatureCollection",
-                features: data.trees.features.map(feature => {
-                    const center = turf.centroid(feature);
-                    center.properties.parent = feature;
-                    return center;
-                })
-            };
-
-            const filteredPoints = turf.pointsWithinPolygon(centroids, turfPoly);
-            if (filteredPoints.features.length === 0) return;
-
-            const filteredPolygons = {
-                type: "FeatureCollection",
-                features: filteredPoints.features.map(f => {
-                    const poly = f.properties.parent;
-                    poly.properties.model = model;
-                    return poly;
-                })
-            };
-
-            filteredGeoJSON = filteredPolygons;
-
-            data.layer = L.geoJSON(filteredGeoJSON, {
-                style: function(feature) {
-                    const model = feature.properties.model;
-                    const modelStyle = modelData[model];
-                    return {
-                        color: modelStyle.color,
-                        weight: modelStyle.size || 2,
-                        fillOpacity: 0.1
-                    };
-                }
-            }).addTo(map);
-        }// if box
+        } else if (data.type === "box" || data.type === "merged") {
+           filteredGeoJSON = getFilteredPolygons(data, turfPoly, model, map);
+        } 
         combinedFeatures = combinedFeatures.concat(filteredGeoJSON.features);
 
     });
@@ -856,9 +865,9 @@ function addModelLayer(model) {
     if (!data) return;
 
     if (activeModels.has(model)) return;
-
+    
     activeModels.add(model);
-
+    
     // If current tool is "blocks" and a block is selected, update trees
     if (toolon === "blocks" && selectedLayer) {
         showTrees(selectedLayer.feature);
@@ -886,21 +895,43 @@ function removeModelLayer(model) {
 }
 
 function loadModelScript(modelKey) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = `./js/${modelKey}.js`; // your file should be named like cv60cm.js etc.
-    script.onload = () => {
-      try {
-        modelData[modelKey].polygon = window[`census_blocks_${modelKey}`];
-        modelData[modelKey].trees = window[modelKey];
-        resolve(modelKey);
-      } catch (err) {
-        reject(`Failed to load data for ${modelKey}: ${err}`);
-      }
-    };
-    script.onerror = () => reject(`Failed to load JS for ${modelKey}`);
-    document.head.appendChild(script);
-  });
+
+    if (modelKey.endsWith("_merged")) {
+        const baseKey = modelKey.replace(/_merged$/, "");
+
+        const baseData = modelData[baseKey];
+
+        // If polygon and trees already loaded, no need to load script
+        if (baseData?.polygon && baseData?.trees) {
+            if (!modelData[modelKey]) modelData[modelKey] = {};
+            modelData[modelKey].polygon = baseData.polygon;
+            modelData[modelKey].trees = baseData.trees;
+            return Promise.resolve(modelKey);
+        }
+        // Otherwise, load base script first
+        return loadModelScript(baseKey).then(() => {
+            if (!modelData[modelKey]) modelData[modelKey] = {};
+            modelData[modelKey].polygon = modelData[baseKey].polygon;
+            modelData[modelKey].trees = modelData[baseKey].trees;
+            return modelKey;
+        });
+    }
+
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = `./js/${modelKey}.js`; // your file should be named like cv60cm.js etc.
+        script.onload = () => {
+            try {
+                modelData[modelKey].polygon = window[`census_blocks_${modelKey}`];
+                modelData[modelKey].trees = window[modelKey];
+                resolve(modelKey);
+            } catch (err) {
+                reject(`Failed to load data for ${modelKey}: ${err}`);
+            }
+        };
+        script.onerror = () => reject(`Failed to load JS for ${modelKey}`);
+        document.head.appendChild(script);
+    });
 }
 
 // === IndexedDB setup ===
@@ -956,6 +987,7 @@ async function loadModelScriptWithCache(modelKey, db) {
     });
   }
 }
+
 async function loadingModel() {
   const db = await openDB();
   const modelKeys = Object.keys(modelData);

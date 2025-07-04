@@ -65,6 +65,7 @@
     border: 1px solid #ccc;
     border-radius: 6px;
     padding: 15px;
+    padding-left: 22px;
     z-index: 1000;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -112,7 +113,7 @@
 .tooltip-wrapper {
   position: relative;
   display: inline-block;
-  margin-left: 10px;
+  margin-left: 0px;
 }
 
 .tooltip-icon {
@@ -184,4 +185,21 @@
 .leaflet-top.leaflet-left .leaflet-control {
   margin-top: 0ch;
   margin-left: 0px;
+}
+
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(180, 238, 185, 0.3), rgba(2, 99, 47, 0.3));
+  z-index: 0;
+}
+
+.background-layer {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
 }
