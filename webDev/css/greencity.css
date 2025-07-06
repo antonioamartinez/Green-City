@@ -1,6 +1,6 @@
 #map {
     
-    height: calc(100vh - 100px);
+    height: calc(100vh - 20px);
 }
 
 #app {
@@ -207,4 +207,8 @@
   height: 100%;
   z-index: 0;
   pointer-events: none;
+}
+
+[class*="-section"] {
+  scroll-margin-top: -11px;
 }
