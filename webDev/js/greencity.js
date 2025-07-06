@@ -1,17 +1,135 @@
+const infoDict = {
+    "co2": `CO2 info`,
+    "pm2": `PM2 info`, 
+    "kgHa": `kgHa info`,
+    "largeArea": `The area is too big, please use either 100 Acre box or street view selection.`
+}
+function getToolTip(text){
+    return `<span class="tooltip-wrapper">
+        <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
+        <div class="tooltip-bubble" style="display: none;">
+            ${text}
+        </div>
+    </span>`;
+}
+
 const infoBoxDefaultHTML = `
   <div class="sidebarmenu">Tree Benefits</div>
   <div class="infoText"><b>How Much CO2 Does A Tree Absorb?</b></div>
   <div class="infoText">On average, each tree absorbs 10 kilograms/22 pounds of CO2 per year</div>
-    <span class="tooltip-wrapper">
-        <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
-        <div class="tooltip-bubble" style="display: none;">
-            CO2 info
-        </div>
-    </span>
+    ${getToolTip(infoDict['co2'])}
   <hr>
   <div class="infoText"><b>How much pollutant (PM₂.₅) can a tree remove?</b></div>
   <div class="infoText">An urban tree removes 0.015 kg (15 g) PM₂.₅ pollutant per year</div>
-`;
+  ${getToolTip(infoDict['pm2'])}
+  <div class="infoText">1 hectare of healthy tree canopy can remove ≈ 4.7 kg of PM2.5 per year</div>
+    ${getToolTip(infoDict['kgHa'])}
+  `;
+
+
+function updateInfoBox(feature, selectedPoints, numModel) {
+    const areaSqMeters = turf.area(feature);
+    const areaAcres = areaSqMeters / 4046.8564224;
+    const hectare = areaAcres / 2.47105;
+
+    let avgDensity, avgTreeCount;
+
+    const pointCount = selectedPoints.features.length / numModel;
+    avgTreeCount = pointCount;
+    avgDensity = pointCount / hectare;
+
+    // Build output
+    let htmlOut = `<div class="sidebarmenu">Selected Area</div>`;
+    htmlOut += `<div class="infoText">Area: ${areaAcres.toFixed(0)} Acre<br>`;
+    htmlOut += `Model Selected: ${numModel}<br>`;
+    htmlOut += `Avg Tree Count: ${avgTreeCount.toFixed(0)}<br>`;
+    htmlOut += `Density: ${avgDensity.toFixed(2)} (count/hectare)<br>`;
+    htmlOut += `</div><hr>`;
+
+    // CO₂ (kg and tonnes)
+    const totalCO2_kg = avgTreeCount * 10;
+    const totalCO2_tonnes = totalCO2_kg / 1000;
+    htmlOut += `<div class="infoText">The selected area absorbed a total of ${totalCO2_kg.toFixed(2)} kg (${totalCO2_tonnes.toFixed(2)} tonnes) CO₂ per year`;
+    htmlOut += `<br>${getToolTip(infoDict['co2'])}</div>`;
+
+    const polygonFeatures = selectedPoints.features.filter(f => f.geometry.type !== "Point");
+
+    if (polygonFeatures.length > 0) {
+        // Track how many models contributed polygons
+        const modelSet = new Set();
+        polygonFeatures.forEach(f => {
+            if (f.properties?.model) {
+                modelSet.add(f.properties.model);
+            }
+        });
+
+        const numPolygonModels = modelSet.size || 1; // avoid divide-by-zero
+
+        const polygonCollection = {
+            type: "FeatureCollection",
+            features: polygonFeatures
+        };
+
+        const totalSqMeters = turf.area(polygonCollection);
+        const avgSqMeters = totalSqMeters / numPolygonModels;
+        const totalHectares = avgSqMeters / 10000;
+
+        const canopy_pm25_kg = totalHectares * 4.7;
+        const canopy_pm25_tonnes = canopy_pm25_kg / 1000;
+        htmlOut += `<hr>
+        <div class="infoText">An estimated ${totalHectares.toFixed(2)}ha canopy area are detected in the selection.<br> 
+        <br>The canopy removed approximately ${canopy_pm25_kg.toFixed(2)} kg (${canopy_pm25_tonnes.toFixed(4)} tonnes) pollution (PM₂.₅) per year
+        <br>${getToolTip(infoDict['kgHa'])}</div>`;
+    }
+    else{
+    // PM2.5 (kg and tonnes)
+        const PM25_per_tree_kg = 0.015;
+        const total_pm25_kg = avgTreeCount * PM25_per_tree_kg;
+        const total_pm25_tonnes = total_pm25_kg / 1000;
+        htmlOut += `<hr>
+        <div class="infoText">The selected area removed approximately ${total_pm25_kg.toFixed(2)} kg (${total_pm25_tonnes.toFixed(4)} tonnes)  pollution (PM₂.₅) per year
+        <br>${getToolTip(infoDict['pm2'])}</div`;
+    }
+    
+    infoBox.innerHTML = htmlOut;
+
+
+//How Much CO2 Does A Tree Absorb?
+        //average value of 10 kilograms/22 pounds per tree per year
+    //https://onetreeplanted.org/blogs/stories/how-much-co2-does-tree-absorb?utm_source=chatgpt.com
+
+    /*
+    Tree Density
+    City trees per hectare
+    https://wfpquantum.s3.amazonaws.com/pdf/2021/63937_State%20of%20the%20Urban%20Forest%20April%202021.pdf?utm_source=chatgpt.com
+    
+    City trees per hectare
+    < 25; 26–50; 51-75; 76-100; >100
+    */
+    
+    /*
+    Air Quality
+    AQI
+    https://en.wikipedia.org/wiki/Air_quality_index?utm_source=chatgpt.com
+    i‑Tree Eco estimates pollutant removal (PM₂.₅, NO₂, O₃, SO₂, CO), expressed in grams per m² of canopy or kg per hectare per year, using local weather and air data
+    
+    1 urban tree removes on average:
+    0.015 kg (15 g) PM₂.₅ per year
+    One hectare of U.S.
+    urban tree cover averages about 67 kg of pollution removal per year (Nowak
+    et al. 2014)
+
+
+    1 hectare of healthy tree canopy can remove ≈ 4.7 kg of PM2.5 per year
+    (source: i-Tree Eco model, US Forest Service)
+    https://www.itreetools.org/documents/389/Reporte_Intec.pdf?utm_source=chatgpt.com
+    https://www.nps.gov/articles/000/uerla-trees-air-pollution.htm?utm_source=chatgpt.com
+
+    That’s about:
+    ~12.9 g/m²/year
+    */
+}
+
 
 // Get map view and map view selection
 const baseLayers = {
@@ -53,6 +171,7 @@ let boxInfo = {};
 const sidebar = document.getElementById('sidebar');
 const infoBox = document.getElementById('infoBox');
 const legend = document.getElementById('legend');
+const modelMenu = document.getElementById("modelMenu");
 
 const activeModels = new Set();
 
@@ -63,7 +182,9 @@ const modelData = {
         type: "pt",
         color: "#f7b283",
         size: 3,
-        layer: null  // add this!
+        layer: null,
+        label: "Tree Points (VGG 16)",
+        tooltip: "Model iniciated with VGG16."
     },
     "training": {
         polygon: null,
@@ -71,7 +192,9 @@ const modelData = {
         type: "pt",
         size: 3,
         color: "#7dc7ff",
-        layer: null
+        layer: null,
+        label: "Street Trees",
+        tooltip: "Training dataset with labeled street trees provided by Pasadena city."
     },
     "deepforest": {
         polygon: null,
@@ -79,7 +202,9 @@ const modelData = {
         type: "box",
         size: 3,
         color: "#f3f7cb",
-        layer: null
+        layer: null,
+        label: "Canopy Boxes (DeepForest)",
+        tooltip: "Detected trees using deepForest Detecting model on 60cm/pixel images"
     },
     "deepforest10cm": {
         polygon: null,
@@ -87,16 +212,20 @@ const modelData = {
         type: "box",
         size: 3,
         color: "#ac3bf7",
-        layer: null
+        layer: null,
+        label: "Deep Forest 10cm",
+        tooltip: "Detected trees using deepForest Detecting model on 10cm/pixel images"
     },
     //"deepforest10cm-merged": {
-    "df10cmMerged":{
+    "deepforest10cmMerged":{
         polygon: null,
         trees: null,
         type: "box",
         size: 3,
         color: "#59fff1",
-        layer: null
+        layer: null,
+        label: "Deep Forest Merged",
+        tooltip: "Detected trees using deepForest Detecting model merging overlapped boxes on 10cm/pixel images"
     },
     "cv60cm": {
         polygon: null,
@@ -104,9 +233,43 @@ const modelData = {
         type: "pt",
         size: 3,
         color: "#ff386d",
-        layer: null
+        layer: null,
+        label: "CV enhanced 60cm",
+        tooltip: "Model using computer vision enhanced images(60cm/pixel)"
     }
 };
+
+function buildModelMenuHtml() {
+    const modelOrder = [
+        "training",
+        "baseline",
+        "cv60cm",
+        "deepforest",
+        "deepforest10cm",
+        "deepforest10cmMerged"
+    ];
+
+    let html = "";
+
+    modelOrder.forEach(key => {
+        const model = modelData[key];
+        if (!model) return;
+
+        html += `
+        <div class="label-row">
+            <label>
+                <input type="checkbox" name="model" value="${key}" ${key === "training" ? 'checked="checked"' : ""}>
+                 ${model.label}
+            </label>
+            ${getToolTip(model.tooltip) || ""}
+            <span class="model-loading-text"></span>
+            <span class="model-symbol"></span>
+        </div>`;
+    });
+
+    modelMenu.innerHTML = html;
+}
+buildModelMenuHtml();
 
 document.querySelectorAll('input[name="mapView"]').forEach(input => {
     input.addEventListener('change', (e) => {
@@ -127,106 +290,9 @@ document.querySelectorAll('input[name="mapView"]').forEach(input => {
 
     });
 });
-function updateInfoBox(feature, selectedPoints, numModel) {
-  const areaSqMeters = turf.area(feature);
-  const areaAcres = areaSqMeters / 4046.8564224;
-  const hectare = areaAcres / 2.47105;
-
-  let avgDensity, avgTreeCount;
-
-  const objectId = feature.properties?.OBJECTID;
-
-  if (objectId !== undefined) {
-    // ✅ Block-based: use average polygon densities
-    let totalDensity = 0;
-    let count = 0;
-
-    activeModels.forEach(model => {
-      const features = modelData[model].polygon.features;
-      const match = features.find(f => f.properties.OBJECTID === objectId);
-      if (match && typeof match.properties.density === "number") {
-        totalDensity += match.properties.density;
-        count++;
-      }
-    });
-
-    avgDensity = count > 0 ? totalDensity / count : 0;
-    avgTreeCount = avgDensity * hectare;
-
-  } else {
-    // ✅ Free-form: use raw point counts
-    const pointCount = selectedPoints.features.length / numModel;
-    avgTreeCount = pointCount;
-    avgDensity = pointCount / hectare;
-  }
-
-  // Build output
-  let htmlOut = `<div class="sidebarmenu">Selected Area</div>`;
-  htmlOut += `<div class="infoText">Area: ${areaAcres.toFixed(0)} Acre<br>`;
-  htmlOut += `Model Selected: ${numModel}<br>`;
-  htmlOut += `Avg Tree Count: ${avgTreeCount.toFixed(0)}<br>`;
-  htmlOut += `Density: ${avgDensity.toFixed(2)} (count/hectare)<br>`;
-  htmlOut += `</div><hr>`;
-
-  // CO₂ (kg and tonnes)
-  const totalCO2_kg = avgTreeCount * 10;
-  const totalCO2_tonnes = totalCO2_kg / 1000;
-  htmlOut += `<div class="infoText">The selected area absorbed a total of ${totalCO2_kg.toFixed(2)} kg (${totalCO2_tonnes.toFixed(2)} tonnes) CO₂ per year</div>`;
-  htmlOut += `<div><hr></div>`;
-
-  // PM2.5 (kg and tonnes)
-  const PM25_per_tree_kg = 0.015;
-  const total_pm25_kg = avgTreeCount * PM25_per_tree_kg;
-  const total_pm25_tonnes = total_pm25_kg / 1000;
-  htmlOut += `<div class="infoText">The selected area removed approximately ${total_pm25_kg.toFixed(2)} kg (${total_pm25_tonnes.toFixed(4)} tonnes)  pollution (PM₂.₅) per year</div>`;
-
-  infoBox.innerHTML = htmlOut;
 
 
-//How Much CO2 Does A Tree Absorb?
-        //average value of 10 kilograms/22 pounds per tree per year
-    //https://onetreeplanted.org/blogs/stories/how-much-co2-does-tree-absorb?utm_source=chatgpt.com
 
-    /*
-    Tree Density
-    City trees per hectare
-    https://wfpquantum.s3.amazonaws.com/pdf/2021/63937_State%20of%20the%20Urban%20Forest%20April%202021.pdf?utm_source=chatgpt.com
-    
-    City trees per hectare
-    < 25; 26–50; 51-75; 76-100; >100
-    */
-    
-    /*
-    Air Quality
-    AQI
-    https://en.wikipedia.org/wiki/Air_quality_index?utm_source=chatgpt.com
-    i‑Tree Eco estimates pollutant removal (PM₂.₅, NO₂, O₃, SO₂, CO), expressed in grams per m² of canopy or kg per hectare per year, using local weather and air data
-    
-    1 urban tree removes on average:
-    0.015 kg (15 g) PM₂.₅ per year
-    One hectare of U.S.
-    urban tree cover averages about 67 kg of pollution removal per year (Nowak
-    et al. 2014)
-    */
-}
-
-/*
- *  Model select base on GeoJson of the tree points against census blocks
- */
-
- // color of each census block base on tree density
- /*
-function getDensityColor(d) {
-  return d > 25  ? '#0c2e13' :
-         d > 20  ? '#0e6920' :
-         d > 15  ? '#198a2c':
-         d > 10  ? '#29ba3a':
-         d > 5   ? '#6af73b' :
-         d > 1   ? '#b7fc47':
-         d > 0   ? '#fcf347':
-                   '#fc9d30';
-}
-*/
 const DENSITY_COLORS = [
   '#fc9d30',  // lowest
   '#fcf347',
@@ -512,6 +578,8 @@ function getFilteredPolygons(data, turfPoly, model) {
 
     return filteredPolygons;
 }
+
+let activeTooltipBubble = null;
  
 /* The showTrees function works only on sensus block since it is using the blocks as the base */
 function showTrees(blockFeature) {
@@ -519,7 +587,10 @@ function showTrees(blockFeature) {
     if (toolon !== "blocks" || !selectedLayer) {
         return;
     }
-
+    if (activeTooltipBubble) {
+        activeTooltipBubble.remove();
+        activeTooltipBubble = null;
+    }
     // Remove all previous filtered layers for active models
     activeModels.forEach(model => {
         const data = modelData[model];
@@ -559,8 +630,39 @@ function showTrees(blockFeature) {
             }).addTo(map);
 
         } else if (data.type === "box" || data.type === "merged") {
-           filteredGeoJSON = getFilteredPolygons(data, blockPolygon, model, map);
+            // 👉 If tooltip is already shown, remove it and stop
+            
+            const areaSqMeters = turf.area(blockPolygon);
+            const areaAcres = areaSqMeters / 4046.8564224;
+
+            if (areaAcres > 100) {
+                if (!activeTooltipBubble){
+                    const centroid = turf.centroid(blockPolygon);
+                    const latlng = L.latLng(centroid.geometry.coordinates[1], centroid.geometry.coordinates[0]);
+                    const point = map.latLngToContainerPoint(latlng);
+
+                    const bubble = document.createElement("div");
+                    bubble.className = "tooltip-bubble";
+                    bubble.innerHTML = infoDict['largeArea'] || "Selected area is too large.";
+                    bubble.style.display = "block";
+
+                    Object.assign(bubble.style, {
+                        position: "absolute",
+                        left: `${point.x}px`,
+                        top: `${point.y}px`,
+                        zIndex: 10000,
+                        maxWidth: "250px"
+                    });
+
+                    map.getContainer().appendChild(bubble);
+                    activeTooltipBubble = bubble;
+                }
+                return; // Skip further processing
+            }
+
+            filteredGeoJSON = getFilteredPolygons(data, blockPolygon, model, map);
         } 
+
         combinedFeatures = combinedFeatures.concat(filteredGeoJSON.features);
         
     });
@@ -972,20 +1074,24 @@ async function saveModelToDB(db, key, polygon, trees) {
 }
 
 async function loadModelScriptWithCache(modelKey, db) {
-  const cached = await getModelFromDB(db, modelKey);
-  if (cached && cached.polygon && cached.trees) {
-    // Restore from IndexedDB
-    modelData[modelKey].polygon = cached.polygon;
-    modelData[modelKey].trees = cached.trees;
-    return modelKey;
-  } else {
+    const cached = await getModelFromDB(db, modelKey);
+    if (cached?.polygon?.features && cached?.trees?.features && modelData[modelKey]) {
+        modelData[modelKey].polygon = cached.polygon;
+        modelData[modelKey].trees = cached.trees;
+
+        if (
+            Array.isArray(modelData[modelKey].polygon.features) &&
+            Array.isArray(modelData[modelKey].trees.features)
+        ) {
+            return modelKey;
+        }
+    }
     // Load the script and save data
     return loadModelScript(modelKey).then((loadedKey) => {
-      const polygon = modelData[modelKey].polygon;
-      const trees = modelData[modelKey].trees;
-      return saveModelToDB(db, modelKey, polygon, trees).then(() => loadedKey);
+        const polygon = modelData[modelKey].polygon;
+        const trees = modelData[modelKey].trees;
+        return saveModelToDB(db, modelKey, polygon, trees).then(() => loadedKey);
     });
-  }
 }
 
 async function loadingModel() {
@@ -1014,6 +1120,7 @@ async function loadingModel() {
     symbol.style.borderRadius = data.type === "pt" ? "50%" : "0";
     symbol.style.backgroundColor = data.color;
     symbol.style.border = '1px solid #333';
+
 
     loadModelScriptWithCache(modelKey, db).then(m => {
       console.log(`Model ${m} loaded`);
@@ -1054,6 +1161,8 @@ function toggleTooltip(iconEl) {
   // Toggle current one
   bubble.style.display = (bubble.style.display === 'block') ? 'none' : 'block';
 }
+
+
 
 function processLoadingDoc(){
     window.addEventListener('DOMContentLoaded', () => {
@@ -1131,5 +1240,47 @@ function processLoadingDoc(){
     window.onload = function() {
     console.log("Everything (DOM + assets) loaded.");
     };
+
+    const app = document.getElementById('app');
+
+    app.addEventListener('wheel', function(event) {
+        event.preventDefault();  // Prevent page scroll on wheel inside #app
+    }, { passive: false });
             
 }
+
+function togglePageScroll(disable) {
+  if (disable) {
+    document.body.style.overflow = 'hidden';  // Disable scroll
+  } else {
+    document.body.style.overflow = '';        // Re-enable scroll
+  }
+}
+
+async function scrollToSectionAndDisableScroll() {
+  const appSection = document.getElementById('app');
+  if (!appSection) return;
+
+  // Smoothly scroll to the #app section
+  appSection.scrollIntoView({ behavior: 'smooth' });
+
+  // Wait for scrolling animation to finish (~500ms)
+  await new Promise(resolve => setTimeout(resolve, 600));
+
+  // Disable page scroll after scroll complete
+  togglePageScroll(true);
+}
+
+function checkHash() {
+  if (window.location.hash === '#app') {
+    scrollToSectionAndDisableScroll();
+  } else {
+    togglePageScroll(false);
+  }
+}
+
+// Run on page load
+checkHash();
+
+// Listen for hash changes
+window.addEventListener('hashchange', checkHash);

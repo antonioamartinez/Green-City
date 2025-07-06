@@ -150,88 +150,14 @@ const layer = document.getElementById('background-layer');
 
                     <div id="map">
                         <div id="sidebar">
-                             <div class="sidebarmenu">Tree Detection Model</div>
-                             <div class="label-row">
-                                <label><input type="checkbox" name="model" value="training" checked="checked"> Street Trees</label>
-                                
-                                <span class="tooltip-wrapper">
-                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
-                                    <div class="tooltip-bubble" style="display: none;">
-                                    Training dataset with labeled street trees provided by Pasadena city.
-                                    </div>
-                                </span>
-                                <span class="model-loading-text"></span>
-                                <span class="model-symbol"></span>
-                            </div> 
-                            <div class="label-row">
-                                <label><input type="checkbox" name="model" value="baseline"> Tree Points (VGG 16)</label>
-
-                                <span class="tooltip-wrapper">
-                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
-                                    <div class="tooltip-bubble" style="display: none;">
-                                    Model iniciated with VGG 16.
-                                    </div>
-                                </span>
-                                <span class="model-loading-text"></span>
-                                <span class="model-symbol"></span>
-                            </div>
-                            <div class="label-row">
-                            <label><input type="checkbox" name="model" value="cv60cm"> CV enhanced 60cm</label>
-
-                                <span class="tooltip-wrapper">
-                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
-                                    <div class="tooltip-bubble" style="display: none;">
-                                    Model using computer vision enhanced images(60cm/pixel)
-                                    </div>
-                                </span>
-                                <span class="model-loading-text"></span>
-                                <span class="model-symbol"></span>                               
-                            </div>
-                            <div class="label-row">
-                                <label><input type="checkbox" name="model" value="deepforest"> Canopy Boxes (DeepForest)</label>
-
-                                <span class="tooltip-wrapper">
-                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
-                                    <div class="tooltip-bubble" style="display: none;">
-                                    Detected trees using deepForest Detecting model on 60cm/pixel images
-                                    </div>
-                                </span>
-                                <span class="model-loading-text"></span>
-                                <span class="model-symbol"></span>
-                            </div>
-                            <div class="label-row">
-                                <label><input type="checkbox" name="model" value="deepforest10cm"> Deep Forest 10cm</label>
-
-                                <span class="tooltip-wrapper">
-                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
-                                    <div class="tooltip-bubble" style="display: none;">
-                                    Detected trees using deepForest Detecting model on 10cm/pixel images
-                                    </div>
-                                </span>
-                                <span class="model-loading-text"></span>
-                                <span class="model-symbol"></span>
-                            </div>
-                            <div class="label-row">
-                                <label><input type="checkbox" name="model" value="df10cmMerged"> Deep Forest Merged</label>
-
-                                <span class="tooltip-wrapper">
-                                    <span class="tooltip-icon" onclick="toggleTooltip(this)">i</span>
-                                    <div class="tooltip-bubble" style="display: none;">
-                                    Detected trees using deepForest Detecting model merging overlapped boxes on 10cm/pixel images
-                                    </div>
-                                </span>
-                                <span class="model-loading-text"></span>
-                                <span class="model-symbol"></span>
-                            </div>
-                             
-                                <hr>
+                            <div class="sidebarmenu">Tree Detection Model</div>
+                            <div id="modelMenu"></div>
+                            <hr>
                              <div class="sidebarmenu">Area Selection</div>
                              <label><input type="radio" name="tool" value="blocks" checked> Census Blocks</label>
                             <label><input type="radio" name="tool" value="rectangle" > 100 Acre Box</label>
                             <label><input type="radio" name="tool" value="street" > Street View</label>
-                            
-                                <hr>
-
+                            <hr>
                              <div class="sidebarmenu">Map View</div>
                             <label><input type="radio" name="mapView" value="satellite" checked> Satellite</label>
                             <label><input type="radio" name="mapView" value="streets"> Streets</label>

@@ -3,6 +3,11 @@
     height: calc(100vh - 100px);
 }
 
+#app {
+  height: 100vh;        /* full viewport height */
+  overflow: hidden;     /* disable scroll inside */
+}
+
 #loading {
   position: absolute;
   top: 50%;
@@ -39,7 +44,7 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    z-index: 1000;
+    z-index: 1001;
     background: white;
     padding: 8px 12px;
     border: 1px solid #666;
@@ -52,8 +57,8 @@
   }
 
 .infoText{
-    padding-bottom: 1em;
-    font-size: 1.3em;
+    padding-bottom: -0.5em;
+    font-size: 1.1em;
 }
 
 #sidebar {
@@ -74,11 +79,11 @@
     display: block;
     margin: 5px 5;
     text-align: left;
-    font-size: 1.3em;
+    font-size: 1.2em;
 }
 
 .sidebarmenu {
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: bold;
     text-align: left;
     margin-top: 0px;
