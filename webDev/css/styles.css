@@ -11125,14 +11125,12 @@ body {
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-size: cover;
-  scroll-margin-top: -15px;
 }
 .about-section p {
   margin-bottom: 5rem;
 }
 
 .project-section {
-  scroll-margin-top: -15px;
   padding: 10rem 0;
   height: auto;
   min-height: calc(100vh);

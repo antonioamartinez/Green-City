@@ -84,9 +84,9 @@ const layer = document.getElementById('background-layer');
   const sectionWidth = section.offsetWidth;
   const sectionHeight = section.offsetHeight;
 
-  const sizes = [0.8, 0.6, 0.25, 0.1, 0.3]; // 50%, 25%, 10%
+  const sizes = [0.2, 0.8, 0.5, 0.6, 0.3]; // 50%, 25%, 10%
   const numCircles = 5;
-                const thirds = 5;
+  const thirds = 5;
   for (let i = 0; i < numCircles; i++) {
     const sizeFactor = sizes[i];
     const pxSize = sectionWidth * sizeFactor;
@@ -102,7 +102,7 @@ const layer = document.getElementById('background-layer');
     const minX = thirdWidth * thirdIndex;
     const maxX = minX + thirdWidth - pxSize;
 
-    const x = Math.random() * (maxX - minX) + minX;
+    const x =  (maxX - minX) + minX;
     const y = Math.random() * (sectionHeight - pxSize);
 
     circle.style.left = x + 'px';
@@ -142,11 +142,8 @@ const layer = document.getElementById('background-layer');
             </div>
         </section>
         <!-- App-->    
-        <section class="bg-light" id="app" height="100%">
-            <!-- Featured app Row-->
-            <div class="row align-items-center"> 
-                
-                <div class="featured-text text-center text-lg-left">
+        <section class=" app-section text-center" id="app">
+
 
                     <div id="map">
                         <div id="sidebar">
@@ -178,16 +175,16 @@ const layer = document.getElementById('background-layer');
                         <div id="loading">Loading...</div>
 
                     </div>
+                    
                     <script src="js/greencity.js"></script>
                     <script language="javascript">
                         initSideBar();
-                        //addLegend();
                         initBlocks();
                         loadingModel();
                         processLoadingDoc();  
-                    </script>   
-                </div>
-            </div>        
+                    </script>  
+                    
+   
 
         </section>
         <!-- Map-->
