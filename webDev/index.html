@@ -10,7 +10,7 @@
         <!-- Font Awesome icons (free version)-->
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         <script src="js/2010_Census_Blocks.js"></script>
-        
+        <script src="js/greencityStyle.js"></script>
         <!--script src="js/training.js"></script-->
         <!--script src="js/cv60cm.js"></script-->
         <link href="css/greencity.css" rel="stylesheet" />
@@ -19,6 +19,7 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
+
         <!--link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/-->
@@ -44,10 +45,11 @@
         
     </head>
     <body id="page-top">
+        <div><img src="assets/img/logoTop.png" id="logo"></div>
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
 
-                <a class="navbar-brand" href="#page-top"> Green City</a>
+                <a class="navbar-brand" href="#page-top"> GreenCity</a>
                 <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
                     <i class="fas fa-bars"></i>
@@ -77,75 +79,56 @@
         </header>
         <!-- About-->
          <div class="background-layer" id="background-layer"></div>
-         <script>
-const layer = document.getElementById('background-layer');
-const section = layer.parentElement;
-const sectionWidth = section.offsetWidth;
-const sectionHeight = section.offsetHeight;
-
-const sizes = [0.2, 0.8, 0.6, 0.3, 0.5, 0.3]; // 50%, 25%, 10%
-const hightPos = [0.02, 0.01, -0.2, 0.3, 1, 1.6];
-const widthPos = [0.01, 0.02, 0.5, 1, 0.4, 0.03];
-const numCircles = 6;
-const sections = 6;
-for (let i = 0; i < numCircles; i++) {
-    const sizeFactor = sizes[i];
-    const pxSize = sectionWidth * sizeFactor;
-
-    const circle = document.createElement('div');
-    circle.classList.add('circle');
-    circle.style.width = pxSize + 'px';
-    circle.style.height = pxSize + 'px';
-
-    //const x =  (maxX - minX) + minX;
-    const x = widthPos[i] * sectionWidth;
-    const y = hightPos[i] * sectionHeight;
-
-    circle.style.left = x + 'px';
-    circle.style.top = y + 'px';
-
-    layer.appendChild(circle);
-}
-</script>
+         <script>createCircles()</script>
         <section class="about-section" id="about">
-<script>
-    function getBlock(hight, yPos){
-        const line = document.createElement("div");
-        line.className = "verticleBlock";
-        line.style.height = hight;
-        line.style.top = yPos;
-        document.body.appendChild(line);
-    }
-
-</script>
-            <div ><img src="assets/img/logo.png" class="logo"></div>
             <div class="verticleLine"></div><script>getBlock("15%", "calc(100vh * 1.3)")</script>
-                <p class="pageTitle">Project Overview</p>
-                <p class="section-text">
-                    test
-                </p>
+            <p class="pageTitle">Overview</p>
+            <div class="section-block">
+                <span class="section-head">GreenCity A Machine Learning Platform for Urban Tree Canopy Monitoring & Green Equity</span>
+                <div class="section-text">
+                    A Story of Data, Justice, and Leaves In many cities, access to trees is a luxury. Wealthier neighborhoods enjoy cool, 
+                    green streets—while lower-income communities endure heat, pollution, and poor health outcomes.  
+                    <br>Manual tree inspections are expensive and rare in underserved areas. But the need for data is urgent.
+                    <br>
+                    <span class="section-title">That's where GreenCity steps in.</span>
+                    <br>Like a digital guardian, GreenCity utilizes satellite vision and machine learning to identify where shade grows—and where it doesn't. 
+                    It maps trees, analyzes canopy, and makes environmental inequity visible.
+                    With it, city planners, local advocates, and arborist groups can finally back up their instincts with real, block-by-block data.
+                    <br><br>
+                
+                    Project Mission GreenCity empowers under-resourced cities and communities with:
+                    <br>
+                    <ul>
+                        <li>An automated way to detect trees and estimate canopy coverage
+                        <li>A browser-based tool that visualizes tree presence and gaps
+                        <li>Metrics to support policy change, grant applications, and urban planning
+                        <li>We're not just counting trees—we're reclaiming green equity.
+                    </ul>
+                </div>
+                
+                <div class="section-text"><img src="assets/img/street1.jpg" style="width: 40vw;">
+                <br><span class="imgText">1981 –WPRA funded Friends of the Arroyo to replace live oaks near the Colorado Street Bridge</span>
+                </div>
                 <p class="section-title">Problem & Motivation</p>
-                <p class="text-white-50">
-                </p>
+                <p class="text-white-50"></p>
+            </div>
         </section>
         <!-- Projects-->
-        <section class="project-section text-center" id="project">
-
-                <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-lg-8">
-                        <h2 class="text-white mb-4">Dataset</h2>
-                        <p class="text-white-50">
-                        </p>
-                        <h2 class="text-white mb-4">Data Science Applications</h2>
-                        <p class="text-white-50">
-                        </p>
-                    </div>
+        <section class="project-section" id="project">
+                <div class="verticleLine"></div><script>getBlock("15%", "calc(100vh * 2.5)")</script>
+                <p class="pageTitle">Dataset</p>
+                <div class="section-block">
+                    <span class="section-title">GreenCity A Machine Learning Platform for Urban Tree Canopy Monitoring & Green Equity</span>
+                  
+                    <p class="section-text">
+                        Data Science Applications
+                    </p>
                 </div>
 
 
         </section>
         <!-- App-->    
-        <section class=" app-section text-center" id="app">
+        <section class="app-section" id="app">
 
 
                     <div id="map">
@@ -183,8 +166,8 @@ for (let i = 0; i < numCircles; i++) {
                     <script language="javascript">
                         initSideBar();
                         initBlocks();
-                        //loadingModel();
-                        //processLoadingDoc();  
+                        loadingModel();
+                        processLoadingDoc();  
                     </script>  
                     
    

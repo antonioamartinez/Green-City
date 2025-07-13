@@ -10994,7 +10994,7 @@ body {
   outline: none;
 }
 #mainNav .navbar-brand {
-  padding-left: 100px;
+  padding-left: 150px;
   color: #000;
   font-weight: 700;
 }
@@ -11113,34 +11113,13 @@ body {
   }
 }
 
-
-
-.project-section {
-  padding: 10rem 0;
-  height: auto;
-  min-height: calc(100vh);
-  background: 
-    linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
-    url("../assets/img/background2.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: scroll;
-  background-size: cover;
-}
-.projects-section .featured-text {
-  padding: 2rem;
-}
 @media (min-width: 992px) {
   .projects-section .featured-text {
     padding: 0 0 0 2rem;
     border-left: 0.5rem solid #64a19d;
   }
 }
-.projects-section .project-text {
-  padding: 3rem;
-  font-size: 90%;
-}
+
 @media (min-width: 992px) {
   .projects-section .project-text {
     padding: 5rem;

@@ -1,6 +1,7 @@
 #map {
     
     height: calc(100vh - 60px);
+    z-index : 999;
 }
 
 #app {
@@ -195,11 +196,9 @@
 .circle {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(180, 238, 185, 0.2), rgba(1, 48, 23, 0.2));
+  background: radial-gradient(circle, rgba(50, 79, 55, 0.4), rgba(1, 23, 12, 0.7));
   z-index: 0;
 }
-
-
 
 .background-layer {
   position: relative;
@@ -207,68 +206,103 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1;
   pointer-events: none;
 }
 
-[class*="-section"] {
-  scroll-margin-top: -15px;
-}
 
-.logo {
+
+#logo {
   position: fixed;       /* stays in place even when scrolling */
-  top: 0px;             /* adjust distance from the top */
-  left: 0px;            /* adjust distance from the left */
-  width:65px;           /* optional: size of the logo */
+  top: 10px;             /* adjust distance from the top */
+  left: 15px;            /* adjust distance from the left */
+  width:100px;           /* optional: size of the logo */
   height: auto;
   z-index: 10000;        /* ensure it's on top */
   pointer-events: none;  /* optional: allow clicks to pass through */
+  background-color: transparent;  /* example */
+}
+
+#logo.topPage {
+  background-color: #fff;
+  top:23px;
+  left:7px;
+  width:120px;
+}
+
+#logo.shrunk {
+  top: 0px;                    /* new position */
+  left: 5px;                   /* move to corner */
+  transform: none;              /* reset translate */
+  width: 65px;                  /* smaller size */
 }
 
 .pageTitle{
   position: relative;
-  top: 0;
+  top: 10px;
   padding: 0.5%;
   padding-left: 10%;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1;
   color: #fff;
-  background:rgba(29, 43, 15, 0.8);
-  font-size: 2em;
+  background:rgba(66, 89, 43, 0.8);
+  font-size: 1.6em;
+}
+
+.section-block{
+  display: flex;          /* side‑by‑side layout   */
+  flex-wrap: wrap;        /* allow wrapping        */
+  gap: 1rem;              /* space between items   */
+  padding: 1rem;          /* optional inner space  */
+  color:#fff;
+  
 }
 
 .section-text{
+  align-self: flex-start;
+  flex: 1 1 200px;        /* grow, shrink, min‑width = 200 px */
+  padding: 1rem;
+  color:#bebebe;
+  z-index:1;
+  font-size: 1.3em;
+  padding: 0.5%;
+  padding-left: 10%;
+}
+.section-head{
   position: relative;
   top: 0;
-  padding: 0.1%;
   padding-left: 10%;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1;
   color: #fff;
-  font-size: 1.5em;
-  
+  font-size: 1.9em;
 }
 
 .section-title{
   position: relative;
   top: 0;
-  padding: 0.5%;
   padding-left: 10%;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1;
   color: #fff;
-  font-size: 2em;
+  font-size: 1.5em;
 }
+.imgText{
+  font-size:0.9em;
+  align-content:center;
+}
+
 .verticleLine{
   position: absolute;
   background: #fff;
   height: 100vh;
   width: 2px;
   z-index: 100;
-  margin-left: 6%;
+  margin-left: 138px;
+  top: 0;
 }
 
 .verticleBlock{
@@ -276,24 +310,35 @@
   background: #fff;
   width: 4px;
   z-index: 100;
-  margin-left: calc(6% - 4px);
+  margin-left: calc(138px - 4px);
 }
 
-.about-section {
+[class$="-section"] {
   position: relative;
-  padding-top: 1em;
+  scroll-margin-top: -15px;
   /*background: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%);*/
   height: auto;
   min-height: calc(100vh);
-  background: 
-    linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
-    url("../assets/img/background1.png");
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-size: cover;
+  padding-top:1.5em;
+
 }
-.about-section p {
-  margin-bottom: 1rem;
+
+.app-section{
+  padding-top:0;
+}
+.about-section {
+ background: 
+    linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
+    url("../assets/img/background1.png");
+}
+.project-section {
+  background: 
+    linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
+    url("../assets/img/background2.png");
 }
