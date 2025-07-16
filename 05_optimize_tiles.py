@@ -7,8 +7,8 @@ from rasterio.shutil import copy as rio_copy
 from rasterio.io import MemoryFile
 
 # ---------- CONFIGURATION ----------
-input_folder = "tile_cache"
-output_folder = "optimized_tile_cache"
+input_folder = "pasadena_tiles_800"
+output_folder = "optimized_pasadena_tiles_800"
 os.makedirs(output_folder, exist_ok=True)
 
 

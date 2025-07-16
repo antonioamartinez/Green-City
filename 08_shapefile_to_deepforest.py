@@ -55,10 +55,10 @@ def main():
 
     # 1) Load and filter
     gdf = gpd.read_file(args.shapefile)
-    if "keep" in gdf.columns:
+    if "keep" in gdf.columns and gdf["keep"].any():
         gdf = gdf[gdf["keep"] == True]
-    if gdf.empty:
-        raise ValueError("No features with keep==True found in the Shapefile.")
+    else:
+        print("[WARN] No keep==True found; exporting *all* features.")
 
     records = []
     # 2) For each image_path, open its raster to get the transform

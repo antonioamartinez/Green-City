@@ -170,3 +170,5 @@ tests/data/*
 docs/user_guide/deepforestr.md
 
 *.xml
+runs/
+*.csv
