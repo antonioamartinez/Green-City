@@ -172,3 +172,53 @@ docs/user_guide/deepforestr.md
 *.xml
 runs/
 *.csv
+# ─── virtual environments ─────────────────────────────
+venv/
+.venv/
+
+# ─── Python cache & bytecode ─────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ─── project data & outputs  ─────────────────────────
+# whole directories of heavy GIS / imagery / logs
+chips/
+data/
+dataset/
+debug_previews/
+deep-forest/
+lightning_logs/
+optimized_pasadena_tiles_800/
+optimized_tile_cache/
+optimized_tiles/
+output/
+pasadena_tiles_800/
+results_fix/
+results_split/
+runs/
+tile_cache/
+tiled_images/
+tiles/
+
+# ─── GIS sidecars & large binaries ───────────────────
+# any GeoTIFF plus its sidecars
+*.tif
+*.tiff
+*.tif.*
+# any GeoJSON
+*.geojson
+*.csv
+
+# ─── Jupyter notebooks (if you don't need them in your build) ─
+*.ipynb
+
+# ─── Git metadata ────────────────────────────────────
+.git
+
+# ─── (OPTIONAL) CSV rules ────────────────────────────
+# If you truly want to ignore all CSVs under data/:
+# data/**/*.csv
+
+# If you need small CSVs (e.g. train.csv, val.csv) in your app dir, remove the global *.csv above.
+# Or move large CSVs into your data/ folder so they’re already covered by the "data/" rule.

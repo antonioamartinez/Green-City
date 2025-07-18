@@ -1,89 +1,108 @@
 #!/usr/bin/env python3
 """
-Convert a QGIS-edited Shapefile of tree crowns into a DeepForest-style CSV
-(image_path,xmin,ymin,xmax,ymax,label) for training.
+Convert predictions_bboxes.geojson → DeepForest CSV
+(image_path,xmin,ymin,xmax,ymax,label), with normalized + clamped boxes.
 """
 
 import argparse
-import os
+import pathlib
 import geopandas as gpd
-import pandas as pd
 import rasterio
-
-
-def polygon_to_bbox_pixels(geom, transform):
-    """
-    Given a Shapely polygon in spatial coordinates and a rasterio transform,
-    return (xmin, ymin, xmax, ymax) in pixel coordinates.
-    """
-    # get the four corner extremes of the geometry
-    minx, miny, maxx, maxy = geom.bounds
-    # map each corner into pixel space
-    corners = [
-        (~transform * (minx, miny)),
-        (~transform * (minx, maxy)),
-        (~transform * (maxx, miny)),
-        (~transform * (maxx, maxy)),
-    ]
-    cols = [c for c, r in corners]
-    rows = [r for c, r in corners]
-    xmin_px, xmax_px = min(cols), max(cols)
-    ymin_px, ymax_px = min(rows), max(rows)
-    return xmin_px, ymin_px, xmax_px, ymax_px
+import pandas as pd
+import numpy as np
 
 
 def main():
     p = argparse.ArgumentParser(
-        description="Build DeepForest annotations CSV from a Shapefile."
+        description="GeoJSON bboxes → DeepForest annotations CSV, normalized and clamped"
     )
     p.add_argument(
-        "--shapefile",
+        "--geojson", required=True, help="Path to predictions_bboxes.geojson"
+    )
+    p.add_argument(
+        "--tile_dir",
         required=True,
-        help="Path to edited Shapefile (must have 'image_path' & 'keep' fields)",
+        help="Directory containing optimized_tiles/ (.tif files)",
     )
     p.add_argument(
-        "--output_csv",
-        required=True,
-        help="Where to write the DeepForest-style CSV",
+        "--output_csv", required=True, help="Path for output annotations CSV"
     )
-    p.add_argument(
-        "--label",
-        default="Tree",
-        help="What label to assign to each bbox (default: 'Tree')",
-    )
+    p.add_argument("--label", default="Tree", help="Label for all bounding boxes")
     args = p.parse_args()
 
-    # 1) Load and filter
-    gdf = gpd.read_file(args.shapefile)
-    if "keep" in gdf.columns:
-        gdf = gdf[gdf["keep"] == True]
-    if gdf.empty:
-        raise ValueError("No features with keep==True found in the Shapefile.")
+    # 1) Load predicted polygons
+    gdf = gpd.read_file(args.geojson)
+
+    # 2) Preload each tile’s bounds, transform, and dimensions
+    tiles = []
+    for tif in pathlib.Path(args.tile_dir).glob("*.tif"):
+        with rasterio.open(tif) as src:
+            tiles.append(
+                {
+                    "path": str(tif),
+                    "bounds": src.bounds,  # (minx, miny, maxx, maxy)
+                    "transform": src.transform,  # for world→pixel
+                    "width": src.width,
+                    "height": src.height,
+                }
+            )
 
     records = []
-    # 2) For each image_path, open its raster to get the transform
-    for img_path, group in gdf.groupby("image_path"):
-        if not os.path.exists(img_path):
-            raise FileNotFoundError(f"Cannot find image: {img_path}")
-        with rasterio.open(img_path) as src:
-            transform = src.transform
-            for _, row in group.iterrows():
-                xmin, ymin, xmax, ymax = polygon_to_bbox_pixels(row.geometry, transform)
+    # 3) For each polygon, find its tile, compute pixel bbox, normalize, clamp
+    for geom in gdf.geometry:
+        cx, cy = geom.centroid.coords[0]
+        # find which tile contains the centroid
+        for tile in tiles:
+            minx, miny, maxx, maxy = tile["bounds"]
+            if minx <= cx <= maxx and miny <= cy <= maxy:
+                t = tile["transform"]
+                # four corners in pixel space
+                corners = [
+                    (~t) * (minx, miny),
+                    (~t) * (minx, maxy),
+                    (~t) * (maxx, miny),
+                    (~t) * (maxx, maxy),
+                ]
+                xs = [c for c, r in corners]
+                ys = [r for c, r in corners]
+                xmin_px, xmax_px = min(xs), max(xs)
+                ymin_px, ymax_px = min(ys), max(ys)
+
+                # Normalize
+                w, h = tile["width"], tile["height"]
+                xmin_n = xmin_px / w
+                ymin_n = ymin_px / h
+                xmax_n = xmax_px / w
+                ymax_n = ymax_px / h
+
+                # Clamp to [0,1]
+                xmin_n = float(np.clip(xmin_n, 0.0, 1.0))
+                ymin_n = float(np.clip(ymin_n, 0.0, 1.0))
+                xmax_n = float(np.clip(xmax_n, 0.0, 1.0))
+                ymax_n = float(np.clip(ymax_n, 0.0, 1.0))
+
+                # Skip degenerate or empty boxes
+                if xmax_n <= xmin_n or ymax_n <= ymin_n:
+                    break  # drop this polygon entirely
+
                 records.append(
                     {
-                        "image_path": img_path,
-                        "xmin": xmin,
-                        "ymin": ymin,
-                        "xmax": xmax,
-                        "ymax": ymax,
+                        "image_path": tile["path"],
+                        "xmin": xmin_n,
+                        "ymin": ymin_n,
+                        "xmax": xmax_n,
+                        "ymax": ymax_n,
                         "label": args.label,
                     }
                 )
+                break
+        else:
+            raise ValueError(f"Polygon at ({cx:.1f}, {cy:.1f}) not in any tile!")
 
-    # 3) Write CSV
+    # 4) Write out the DeepForest-formatted CSV
     df = pd.DataFrame(records)
     df.to_csv(args.output_csv, index=False)
-    print(f"Wrote {len(df)} annotations → {args.output_csv}")
+    print(f"Wrote {len(df)} valid annotations → {args.output_csv}")
 
 
 if __name__ == "__main__":

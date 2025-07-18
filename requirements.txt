@@ -48,7 +48,7 @@ fonttools==4.58.2
 fqdn==1.5.1
 frozenlist==1.7.0
 fsspec==2025.5.1
-GDAL==3.8.4
+GDAL==3.6.2
 geopandas==1.1.0
 google-api-core==2.25.1
 google-api-python-client==2.172.0
