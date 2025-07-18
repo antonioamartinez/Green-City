@@ -36,16 +36,8 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
-.pytest_cache/
-cover/
-*.png
-*.tif
-*.geojson
-# Translations
-*.mo
-*.pot
 
-# Django stuff:
+# ─── Logs & Reports ────────────────────────────────────────────────────
 *.log
 pip-log.txt
 pip-delete-this-directory.txt
@@ -191,34 +183,79 @@ deep-forest/
 lightning_logs/
 optimized_pasadena_tiles_800/
 optimized_tile_cache/
-optimized_tiles/
 output/
 pasadena_tiles_800/
-results_fix/
-results_split/
+results_*/
 runs/
 tile_cache/
 tiled_images/
 tiles/
-
-# ─── GIS sidecars & large binaries ───────────────────
-# any GeoTIFF plus its sidecars
 *.tif
 *.tiff
-
-# any GeoJSON
 *.geojson
 *.csv
 
-# ─── Jupyter notebooks (if you don't need them in your build) ─
+# ─── Blob & Model Files ─────────────────────────────────────────────────
+*.h5
+*.pt
+*.pl
+*.prof
+*.wp*
+current_*.csv
+
+# ─── Notebooks & Interactive Sessions ──────────────────────────────────
+.ipynb_checkpoints/
 *.ipynb
 
-# ─── Git metadata ────────────────────────────────────
-.git
+# ─── IDE & Editor Settings ─────────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
+.spyderproject
+.spyproject
+.ropeproject
 
-# ─── (OPTIONAL) CSV rules ────────────────────────────
-# If you truly want to ignore all CSVs under data/:
-# data/**/*.csv
+# ─── Project Metadata & Tooling ────────────────────────────────────────
+.pybuilder/
+target/
+.pdm.toml
+.pdm-python
+.pdm-build/
+__pypackages__/
 
-# If you need small CSVs (e.g. train.csv, val.csv) in your app dir, remove the global *.csv above.
-# Or move large CSVs into your data/ folder so they’re already covered by the "data/" rule.
+# ─── Framework Specific ────────────────────────────────────────────────
+instance/                # Flask
+.webassets-cache         # Flask
+.local_settings.py
+db.sqlite3*
+.scrapy                  # Scrapy
+docs/_build/             # Sphinx / MkDocs
+site/
+
+# ─── Deployment & Miscellaneous ────────────────────────────────────────
+.MANIFEST
+celerybeat-schedule
+celerybeat.pid
+*.mo
+*.pot
+.DS_Store
+.RHistory
+.git                       # Git internals
+
+# ─── Type Checkers & Static Analysis ──────────────────────────────────
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+
+# ─── C Extensions & Binaries ───────────────────────────────────────────
+*.so
+cython_debug/
+
+# ─── Global IDE/Editor Lock & Config Files (Optional Comments) ───────
+# Uncomment if needed:
+# Pipfile.lock
+# poetry.lock
+# pdm.lock
+# .python-version
+
