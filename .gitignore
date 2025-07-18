@@ -205,7 +205,7 @@ tiles/
 # any GeoTIFF plus its sidecars
 *.tif
 *.tiff
-*.tif.*
+
 # any GeoJSON
 *.geojson
 *.csv
