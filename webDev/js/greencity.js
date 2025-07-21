@@ -1,7 +1,18 @@
 const infoDict = {
-    "co2": `CO2 info`,
-    "pm2": `PM2 info`, 
-    "kgHa": `kgHa info`,
+    "co2": `A healthy tree absorbs approx. <strong>10 kg</strong> (22 lbs) of CO₂ per year<sup>[1]</sup>.<br>
+  <small><a href="https://onetreeplanted.org/blogs/stories/how-much-co2-does-tree-absorb?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer">
+    [One Tree Planted - How Much CO₂ Does a Tree Absorb?]
+  </a></small>`,
+    "pm2": `An average urban tree removes ~<strong>0.015 kg</strong> of PM₂.₅/year.  
+  One hectare of canopy removes ~<strong>67 kg</strong>/year.<br>
+  <a href="https://www.nrs.fs.fed.us/pubs/47323" target="_blank" rel="noopener noreferrer">
+    [Nowak et al. 2014]
+  </a>`, 
+    "kgHa": `1 hectare of healthy canopy removes ~<strong>4.7 kg</strong> of PM₂.₅/year  
+  (~<strong>12.9 g/m²/year</strong>).<br>
+  <a href="https://www.itreetools.org/documents/389/Reporte_Intec.pdf" target="_blank" rel="noopener noreferrer">
+    [i-Tree Eco, USFS]
+  </a>`,
     "largeArea": `The area is too big, please use either 100 Acre box or street view selection.`
 }
 function getToolTip(text){
@@ -177,7 +188,7 @@ const activeModels = new Set();
 
 const modelData = {
     "baseline": {
-        polygon: null,
+        densityMap: null,
         trees: null,
         type: "pt",
         color: "#f7b283",
@@ -187,17 +198,17 @@ const modelData = {
         tooltip: "Model iniciated with VGG16."
     },
     "training": {
-        polygon: null,
+        densityMap: null,
         trees: null,
         type: "pt",
         size: 3,
-        color: "#7dc7ff",
+        color: "#4842f5",
         layer: null,
         label: "Street Trees",
         tooltip: "Training dataset with labeled street trees provided by Pasadena city."
     },
     "deepforest": {
-        polygon: null,
+        densityMap: null,
         trees: null,
         type: "box",
         size: 3,
@@ -207,7 +218,7 @@ const modelData = {
         tooltip: "Detected trees using deepForest Detecting model on 60cm/pixel images"
     },
     "deepforest10cm": {
-        polygon: null,
+        densityMap: null,
         trees: null,
         type: "box",
         size: 3,
@@ -218,7 +229,7 @@ const modelData = {
     },
     //"deepforest10cm-merged": {
     "deepforest10cmMerged":{
-        polygon: null,
+        densityMap: null,
         trees: null,
         type: "box",
         size: 3,
@@ -228,7 +239,7 @@ const modelData = {
         tooltip: "Detected trees using deepForest Detecting model merging overlapped boxes on 10cm/pixel images"
     },
     "cv60cm": {
-        polygon: null,
+        densityMap: null,
         trees: null,
         type: "pt",
         size: 3,
@@ -678,7 +689,6 @@ function showTrees(blockFeature) {
 
 function updatePolygonStyle() {
     const numModels = activeModels.size;
-
     if (numModels === 0) {
         // No models selected, reset styles
         polygonLayer.setStyle(blankBlock);
@@ -687,9 +697,11 @@ function updatePolygonStyle() {
     const layers = polygonLayer.getLayers();
     const allDensities = [];
     let maxD = 0;
+    
     //activeModels.forEach(model => {alert(model)});
     layers.forEach(layer => {
         const objectId = layer.feature.properties.OBJECTID;
+        //alert(objectId )
         if (objectId === undefined) {
             console.warn("Feature missing OBJECTID:", layer.feature);
             return;
@@ -699,14 +711,26 @@ function updatePolygonStyle() {
         let count = 0;
 
         activeModels.forEach(model => {
+            
             const baseModelKey = model.endsWith("_merged") ? model.replace(/_merged$/, "") : model;
-            const modelFeatures = modelData[baseModelKey].polygon.features;
+            //const modelFeatures = modelData[baseModelKey].polygon.features;
             //const modelFeatures = modelData[model].polygon.features;
+            /*
             const matchingFeature = modelFeatures.find(f => f.properties.OBJECTID === objectId);
             if (matchingFeature && typeof matchingFeature.properties.density === "number") {
                 totalDensity += matchingFeature.properties.density;
                 count++;
             }
+            */
+            const densityMap = modelData[baseModelKey].densityMap;
+
+            //const densityDict = window["density_" + baseModelKey];
+
+            if (densityMap && objectId in densityMap) {
+                totalDensity += densityMap[objectId];
+                count++;
+            }
+
         });
 
         const avgDensity = count > 0 ? totalDensity / count : 0;
@@ -1004,27 +1028,29 @@ function loadModelScript(modelKey) {
         const baseData = modelData[baseKey];
 
         // If polygon and trees already loaded, no need to load script
-        if (baseData?.polygon && baseData?.trees) {
+        if (baseData?.densityMap && baseData?.trees) {
             if (!modelData[modelKey]) modelData[modelKey] = {};
-            modelData[modelKey].polygon = baseData.polygon;
+            modelData[modelKey].densityMap = baseData.densityMap;
             modelData[modelKey].trees = baseData.trees;
             return Promise.resolve(modelKey);
         }
         // Otherwise, load base script first
         return loadModelScript(baseKey).then(() => {
             if (!modelData[modelKey]) modelData[modelKey] = {};
-            modelData[modelKey].polygon = modelData[baseKey].polygon;
+            modelData[modelKey].densityMap = modelData[baseKey].densityMap;
             modelData[modelKey].trees = modelData[baseKey].trees;
             return modelKey;
         });
     }
-
+   
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = `./js/${modelKey}.js`; // your file should be named like cv60cm.js etc.
         script.onload = () => {
             try {
-                modelData[modelKey].polygon = window[`census_blocks_${modelKey}`];
+                //modelData[modelKey].polygon = window[`census_blocks_${modelKey}`];
+                modelData[modelKey].densityMap = window[`density_${modelKey}`];
+                
                 modelData[modelKey].trees = window[modelKey];
                 resolve(modelKey);
             } catch (err) {
@@ -1063,34 +1089,50 @@ async function getModelFromDB(db, key) {
   });
 }
 
-async function saveModelToDB(db, key, polygon, trees) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction("models", "readwrite");
-    const store = tx.objectStore("models");
-    const request = store.put({ key, polygon, trees });
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-  });
+
+async function saveModelToDB(db, key, densityMap, trees) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction("models", "readwrite");
+        const store = tx.objectStore("models");
+
+        if (trees) {
+        store.put({ key: key + "_trees", data: trees });
+        }
+
+        if (densityMap) {
+        store.put({ key: key + "_density", data: densityMap });
+        }
+
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+    });
 }
 
 async function loadModelScriptWithCache(modelKey, db) {
     const cached = await getModelFromDB(db, modelKey);
-    if (cached?.polygon?.features && cached?.trees?.features && modelData[modelKey]) {
-        modelData[modelKey].polygon = cached.polygon;
+    if (cached?.densityMap?.features && cached?.trees?.features && modelData[modelKey]) {
+        modelData[modelKey].densityMap = cached.densityMap;
         modelData[modelKey].trees = cached.trees;
-
         if (
-            Array.isArray(modelData[modelKey].polygon.features) &&
-            Array.isArray(modelData[modelKey].trees.features)
+            modelData[modelKey].densityMap &&
+            typeof modelData[modelKey].densityMap === "object" &&
+            Array.isArray(modelData[modelKey].trees?.features)
         ) {
             return modelKey;
         }
     }
     // Load the script and save data
+
     return loadModelScript(modelKey).then((loadedKey) => {
-        const polygon = modelData[modelKey].polygon;
-        const trees = modelData[modelKey].trees;
-        return saveModelToDB(db, modelKey, polygon, trees).then(() => loadedKey);
+        const densityMap = modelData[modelKey]?.densityMap;
+        const trees = modelData[modelKey]?.trees;
+
+        // Only call saveModelToDB if at least one of them exists
+        if (densityMap || trees) {
+            return saveModelToDB(db, modelKey, densityMap, trees).then(() => loadedKey);
+        }
+
+        return loadedKey; // Skip saving if neither exists
     });
 }
 
@@ -1099,53 +1141,56 @@ async function loadingModel() {
   const modelKeys = Object.keys(modelData);
   let completed = 0;
 
-  for (const modelKey of modelKeys) {
-    const row = document.querySelector(`.label-row input[value="${modelKey}"]`)?.closest('.label-row');
-    if (!row) continue;
+    for (const modelKey of modelKeys) {
+        const row = document.querySelector(`.label-row input[value="${modelKey}"]`)?.closest('.label-row');
+        if (!row) continue;
 
-    const spanLoading = row.querySelector(".model-loading-text");
-    const checkbox = row.querySelector("input");
-    const symbol = row.querySelector(".model-symbol");
-    const data = modelData[modelKey];
+        const spanLoading = row.querySelector(".model-loading-text");
+        const checkbox = row.querySelector("input");
+        const symbol = row.querySelector(".model-symbol");
+        const data = modelData[modelKey];
 
-    if (!checkbox || !spanLoading || !symbol || !data) continue;
+        if (!checkbox || !spanLoading || !symbol || !data) continue;
 
-    // Show loading
-    spanLoading.textContent = " (loading...)";
-    checkbox.disabled = true;
+        // Show loading
+        spanLoading.textContent = " (loading...)";
+        checkbox.disabled = true;
 
-    // Update the symbol (regardless of model loaded or not)
-    symbol.style.width = `${data.size * 4}px`;
-    symbol.style.height = `${data.size * 4}px`;
-    symbol.style.borderRadius = data.type === "pt" ? "50%" : "0";
-    symbol.style.backgroundColor = data.color;
-    symbol.style.border = '1px solid #333';
+        // Update the symbol (regardless of model loaded or not)
+        symbol.style.width = `${data.size * 4}px`;
+        symbol.style.height = `${data.size * 4}px`;
+        symbol.style.borderRadius = data.type === "pt" ? "50%" : "0";
+        symbol.style.backgroundColor = data.color;
+        symbol.style.border = '1px solid #333';
 
 
-    loadModelScriptWithCache(modelKey, db).then(m => {
-      console.log(`Model ${m} loaded`);
+        loadModelScriptWithCache(modelKey, db).then(m => {
+        console.log(`Model ${m} loaded`);
 
-      if (modelKey === "training") {
-        document.querySelector('input[name="tool"][value="blocks"]').checked = true;
-        const trainingCheckbox = document.querySelector('input[name="model"][value="training"]');
-        trainingCheckbox.checked = true;
-        trainingCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
-      }
+        if (modelKey === "training") {
+            document.querySelector('input[name="tool"][value="blocks"]').checked = true;
+            const trainingCheckbox = document.querySelector('input[name="model"][value="training"]');
+            trainingCheckbox.checked = true;
+            trainingCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+        }
 
-      spanLoading.textContent = "";
-      checkbox.disabled = false;
+        spanLoading.textContent = "";
+        checkbox.disabled = false;
 
-    }).catch(err => {
-      console.error(err);
-      spanLoading.textContent = " (failed)";
-    }).finally(() => {
-      completed++;
-      if (completed === modelKeys.length) {
-        const loader = document.querySelector("#map #loading");
-        if (loader) loader.remove();
-      }
-    });
-  }
+        }).catch(err => {
+        console.error(err);
+        spanLoading.textContent = " (failed)";
+        }).finally(() => {
+            completed++;
+            const percent = Math.round((completed / modelKeys.length) * 100);
+            const globalLoader = document.querySelector("#map #loading");
+            if (globalLoader) globalLoader.textContent = `Loading models... ${percent}%`;
+
+            if (completed === modelKeys.length) {
+                if (globalLoader) globalLoader.remove();
+            }
+        });
+    }
 }
 
 function toggleTooltip(iconEl) {
@@ -1237,50 +1282,26 @@ function processLoadingDoc(){
     document.getElementById("infoBox").innerHTML = infoBoxDefaultHTML;
     map.doubleClickZoom.disable();
     handleToolChange(document.querySelector('input[name="tool"]:checked').value);
-    window.onload = function() {
-    console.log("Everything (DOM + assets) loaded.");
-    };
 
     const app = document.getElementById('app');
 
     app.addEventListener('wheel', function(event) {
         event.preventDefault();  // Prevent page scroll on wheel inside #app
     }, { passive: false });
+
+    const appSection = document.getElementById('app');
+
+    appSection.addEventListener('wheel', (e) => {
+    e.preventDefault(); // Prevent the page from scrolling
+
+    // Manually zoom the Leaflet map (assuming your map instance is `map`)
+    if (e.deltaY < 0) {
+        map.zoomIn();
+    } else {
+        map.zoomOut();
+    }
+    }, { passive: false });
             
 }
 
-function togglePageScroll(disable) {
-  if (disable) {
-    document.body.style.overflow = 'hidden';  // Disable scroll
-  } else {
-    document.body.style.overflow = '';        // Re-enable scroll
-  }
-}
 
-async function scrollToSectionAndDisableScroll() {
-  const appSection = document.getElementById('app');
-  if (!appSection) return;
-
-  // Smoothly scroll to the #app section
-  appSection.scrollIntoView({ behavior: 'smooth' });
-
-  // Wait for scrolling animation to finish (~500ms)
-  await new Promise(resolve => setTimeout(resolve, 600));
-
-  // Disable page scroll after scroll complete
-  togglePageScroll(true);
-}
-
-function checkHash() {
-  if (window.location.hash === '#app') {
-    scrollToSectionAndDisableScroll();
-  } else {
-    togglePageScroll(false);
-  }
-}
-
-// Run on page load
-checkHash();
-
-// Listen for hash changes
-window.addEventListener('hashchange', checkHash);

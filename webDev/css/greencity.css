@@ -298,7 +298,7 @@
 .verticleLine{
   position: absolute;
   background: #fff;
-  height: 100vh;
+  height: 100%;
   width: 2px;
   z-index: 100;
   margin-left: 138px;
@@ -329,6 +329,7 @@
 
 .app-section{
   padding-top:0;
+  scroll-margin-top: -15px;
 }
 .about-section {
  background: 

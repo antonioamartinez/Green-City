@@ -43,6 +43,7 @@ function getBlock(hight, yPos){
     document.body.appendChild(line);
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
     const logo   = document.getElementById('logo');
     const app = document.getElementById('app');
@@ -83,3 +84,4 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 });
+
