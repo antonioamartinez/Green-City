@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-03_predict_tile_folder_override_cap.py
+04_predict_tile_folder.py
 --------------------------------------
 
 Batch inference over a folder of TIFF tiles with increased detections per tile,

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-merge_polygons.py
+07_merge_polygons.py
 
 Read a GeoJSON of DeepForest bounding-box predictions,
 merge overlapping boxes into exact union polygons using Shapely,

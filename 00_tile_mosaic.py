@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Tile a large GeoTIFF (e.g. Pasadena_Whole_Map.tif, 95 GB) into
+Tile a large GeoTIFF (e.g. Pasadena_Whole_Map.tif) into
 manageable 4096 px squares without loading the whole raster into RAM.
 
 Usage

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-run_coverage_tuning.py
+06_coverage_tuning.py
 
 Grid-search over DeepForest hyperparameters to maximize coverage% @ radius 12 m,
 sweeping score_thresh, nms_thresh, and patch overlap.

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 """
-06_evaluate_distance.py  –  bbox‐overlap + distance coverage with progress bars.
+05_evaluate_distance.py  –  bbox‐overlap + distance coverage with progress bars.
 
 Counts a true positive whenever any ground‐truth bounding box overlaps
 the predicted bounding box, regardless of IoU.
 
 CLI example
 -----------
-python 06_evaluate_distance.py \
+python 05_evaluate_distance.py \
        --gt_geojson merged_gt.geojson \
        --pred_geojson pasadena_preds_2229.geojson \
        --out_csv metrics_plus_distance.csv \

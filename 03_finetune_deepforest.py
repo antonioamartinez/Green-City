@@ -92,11 +92,11 @@ def finetune(
     model.create_trainer()
     model.trainer.callbacks.append(PrintAndLogLossCallback())
 
-    # ── NEW: patch ReduceLROnPlateau min_lrs if they’re strings or zero ───────
+    # patch ReduceLROnPlateau min_lrs if they’re strings or zero
     for sch_cfg in model.trainer.lr_scheduler_configs:
         sched = sch_cfg.scheduler
         if isinstance(sched, ReduceLROnPlateau):
-            # eps might come in as str (your original guard)
+            # eps might come in as str
             if isinstance(sched.eps, str):
                 sched.eps = float(sched.eps)
 
