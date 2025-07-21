@@ -120,6 +120,138 @@ celerybeat.pid
 *.so
 cython_debug/
 
+# PyCharm
+#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#  and can be added to the global gitignore or merged into this file.  For a more nuclear
+#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
+#.idea/
+
+# Ruff stuff:
+.ruff_cache/
+
+# PyPI configuration file
+.pypirc
+
+# Deep forest virtual environment
+deep-forest/
+
+# Deep Forest
+.coverage
+.DS_Store
+.idea
+.RHistory
+*__pycache__*
+*.egg-info
+*.h5
+*.pl
+*.prof
+*.pt
+*.wp*
+build/
+current_bird_release.csv
+current_release.csv
+docs/_build/
+env/
+lightning_logs/*
+public/
+tests/__pycache__
+tests/data/*
+.vscode/
+*ipynb_checkpoints/
+docs/user_guide/deepforestr.md
+
+*.xml
+runs/
+*.csv
+# ─── virtual environments ─────────────────────────────
+venv/
+.venv/
+
+# ─── Python cache & bytecode ─────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ─── project data & outputs  ─────────────────────────
+# whole directories of heavy GIS / imagery / logs
+chips/
+data/
+dataset/
+debug_previews/
+deep-forest/
+lightning_logs/
+optimized_pasadena_tiles_800/
+optimized_tile_cache/
+output/
+pasadena_tiles_800/
+results_*/
+runs/
+tile_cache/
+tiled_images/
+tiles/
+*.tif
+*.tiff
+*.geojson
+*.csv
+
+# ─── Blob & Model Files ─────────────────────────────────────────────────
+*.h5
+*.pt
+*.pl
+*.prof
+*.wp*
+current_*.csv
+
+# ─── Notebooks & Interactive Sessions ──────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ─── IDE & Editor Settings ─────────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
+.spyderproject
+.spyproject
+.ropeproject
+
+# ─── Project Metadata & Tooling ────────────────────────────────────────
+.pybuilder/
+target/
+.pdm.toml
+.pdm-python
+.pdm-build/
+__pypackages__/
+
+# ─── Framework Specific ────────────────────────────────────────────────
+instance/                # Flask
+.webassets-cache         # Flask
+.local_settings.py
+db.sqlite3*
+.scrapy                  # Scrapy
+docs/_build/             # Sphinx / MkDocs
+site/
+
+# ─── Deployment & Miscellaneous ────────────────────────────────────────
+.MANIFEST
+celerybeat-schedule
+celerybeat.pid
+*.mo
+*.pot
+.DS_Store
+.RHistory
+.git                       # Git internals
+
+# ─── Type Checkers & Static Analysis ──────────────────────────────────
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+
+# ─── C Extensions & Binaries ───────────────────────────────────────────
+*.so
+cython_debug/
+
 # ─── Global IDE/Editor Lock & Config Files (Optional Comments) ───────
 # Uncomment if needed:
 # Pipfile.lock
