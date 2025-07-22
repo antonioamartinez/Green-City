@@ -5,7 +5,7 @@
 }
 
 #app {
-  height: 100vh;        /* full viewport height */
+  height: calc(100vh - 100px);        /* full viewport height */
   overflow: hidden;     /* disable scroll inside */
 }
 
@@ -216,7 +216,7 @@
   position: fixed;       /* stays in place even when scrolling */
   top: 10px;             /* adjust distance from the top */
   left: 15px;            /* adjust distance from the left */
-  width:100px;           /* optional: size of the logo */
+  width:80px;           /* optional: size of the logo */
   height: auto;
   z-index: 10000;        /* ensure it's on top */
   pointer-events: none;  /* optional: allow clicks to pass through */
@@ -227,7 +227,7 @@
   background-color: #fff;
   top:23px;
   left:7px;
-  width:120px;
+  width:100px;
 }
 
 #logo.shrunk {
@@ -263,7 +263,7 @@
   align-self: flex-start;
   flex: 1 1 200px;        /* grow, shrink, min‑width = 200 px */
   padding: 1rem;
-  color:#bebebe;
+  color:#f4f4f4;
   z-index:1;
   font-size: 1.3em;
   padding: 0.5%;
@@ -330,6 +330,10 @@
 .app-section{
   padding-top:0;
   scroll-margin-top: -15px;
+  background: 
+    linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
+    url("../assets/img/background3.png");
 }
 .about-section {
  background: 
@@ -342,4 +346,20 @@
     linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
     linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
     url("../assets/img/background2.png");
+}
+
+.evaluation-section {
+ background: 
+    linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 80%, #000 100%),
+    url("../assets/img/background5.png");
+}
+
+
+.block-box{
+  text-align: center; 
+  width: 20vw; 
+  margin: 0 auto; 
+  left: 50px; 
+  font-size:1.3em; 
 }

@@ -3801,14 +3801,14 @@ textarea.form-control-lg {
 .navbar {
   --bs-navbar-padding-x: 0;
   --bs-navbar-padding-y: 0.3rem;
-  --bs-navbar-color: rgba(0, 0, 0, 0.55);
+  --bs-navbar-color: rgba(5, 96, 59, 0.55);
   --bs-navbar-hover-color: rgba(0, 0, 0, 0.7);
   --bs-navbar-disabled-color: rgba(0, 0, 0, 0.3);
-  --bs-navbar-active-color: rgba(0, 0, 0, 0.9);
+  --bs-navbar-active-color: rgba(7, 115, 56, 0.9);
   --bs-navbar-brand-padding-y: 0.3125rem;
   --bs-navbar-brand-margin-end: 1rem;
-  --bs-navbar-brand-font-size: 1.25rem;
-  --bs-navbar-brand-color: rgba(0, 0, 0, 0.9);
+  --bs-navbar-brand-font-size: 1.8rem;
+  --bs-navbar-brand-color: rgba(3, 95, 23, 0.9);
   --bs-navbar-brand-hover-color: rgba(0, 0, 0, 0.9);
   --bs-navbar-nav-link-padding-x: 0.5rem;
   --bs-navbar-toggler-padding-y: 0.25rem;
@@ -10994,7 +10994,7 @@ body {
   outline: none;
 }
 #mainNav .navbar-brand {
-  padding-left: 150px;
+  padding-left: 130px;
   color: #000;
   font-weight: 700;
 }
@@ -11035,10 +11035,10 @@ body {
     background-color: #fff;
   }
   #mainNav.navbar-shrink .navbar-brand {
-    color: #000;
+    color: #035112ff;
   }
   #mainNav.navbar-shrink .nav-link {
-    color: #000;
+    color: #035112ff;
     padding: 1rem 1rem 1rem;
     border-bottom: 0.25rem solid transparent;
   }
@@ -11071,7 +11071,7 @@ body {
   height: auto;
   min-height: 15rem;
   padding: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.7) 75%, #000 100%), url("../assets/img/bg-masthead.jpg");
+  background: linear-gradient(to bottom, rgba(88, 88, 88, 0.2) 0%, rgba(33, 33, 33, 0.7) 75%, #000 100%), url("../assets/img/bg-masthead.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: scroll;

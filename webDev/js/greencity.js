@@ -776,56 +776,81 @@ function updateVisiblePoints() {
         [rectBounds.getWest(), rectBounds.getSouth()]
     ]]);
 
-    // Remove previous layers
-    activeModels.forEach(model => {
-        const data = modelData[model];
-        if (data.layer && map.hasLayer(data.layer)) {
-            map.removeLayer(data.layer);
-            data.layer = null;
-        }
-    });
+    
 
     if (activeModels.size === 0) return;
 
-    let combinedFeatures = [];  // top of function
-    activeModels.forEach(model => {
-        const data = modelData[model];
-        if (!data || !data.trees) return;
+    const payload = {
+        polygon: turfPoly,
+        models: Array.from(activeModels)
+    };
 
-        let filteredGeoJSON = null;
+    let combinedFeatures = [];
 
-        if (data.type === "pt") {
-            const filtered = {
-                type: "FeatureCollection",
-                features: data.trees.features.filter(pt =>
-                    turf.booleanPointInPolygon(pt, turfPoly)
-                )
-            };
+    try {
+        const res = await fetch('/api/get_filtered_trees', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
 
-            if (filtered.features.length === 0) return;
+        if (!res.ok) {
+            console.error("Server error:", await res.text());
+            return;
+        }
 
-            filtered.features.forEach(f => {
+        const result = await res.json();
+        // Remove previous layers
+
+        activeModels.forEach(model => {
+            const data = modelData[model];
+            if (data.layer && map.hasLayer(data.layer)) {
+                map.removeLayer(data.layer);
+                data.layer = null;
+            }
+        });
+
+        for (const model in result) {
+            const data = modelData[model];
+            const geojson = result[model];
+
+            if (!geojson || !geojson.features || geojson.features.length === 0) continue;
+
+            geojson.features.forEach(f => {
                 f.properties.model = model;
             });
 
-            filteredGeoJSON = filtered;
+            if (data.type === "pt") {
+                data.layer = L.geoJSON(geojson, {
+                    pointToLayer: createCircleMarker
+                }).addTo(map);
+            } else {
+                data.layer = L.geoJSON(geojson, {
+                    style: function(feature) {
+                        const modelStyle = modelData[model];
+                        return {
+                            color: modelStyle.color,
+                            fillColor: modelStyle.color,
+                            weight: modelStyle.size || 2,
+                            opacity: 1,
+                            fillOpacity: 0.1
+                        };
+                    }
+                }).addTo(map);
+            }
 
-            data.layer = L.geoJSON(filteredGeoJSON, {
-                pointToLayer: createCircleMarker
-            }).addTo(map);
+            combinedFeatures = combinedFeatures.concat(geojson.features);
+        }
 
-        } else if (data.type === "box" || data.type === "merged") {
-           filteredGeoJSON = getFilteredPolygons(data, turfPoly, model, map);
-        } 
-        combinedFeatures = combinedFeatures.concat(filteredGeoJSON.features);
+        const combinedFeatureCollection = {
+            type: "FeatureCollection",
+            features: combinedFeatures
+        };
 
-    });
-    const combinedFeatureCollection = {
-        type: "FeatureCollection",
-        features: combinedFeatures
-    };
-
-    updateInfoBox(turfPoly, combinedFeatureCollection, activeModels.size);
+        updateInfoBox(turfPoly, combinedFeatureCollection, activeModels.size);
+    } catch (err) {
+        console.error("Failed to fetch filtered trees:", err);
+    }
 }
 
     

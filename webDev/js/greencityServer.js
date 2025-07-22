@@ -192,7 +192,7 @@ const modelData = {
         densityMap: null,
         trees: null,
         type: "pt",
-        color: "#f7b283",
+        color: "#ed83f7ff",
         size: 3,
         layer: null,
         label: "Tree Points (VGG 16)",
@@ -329,7 +329,7 @@ const DENSITY_COLORS = [
   '#6af73b',
   '#29ba3a',
   '#198a2c',
-  '#0e6920',
+  '#035112ff',
   '#0c2e13'   // highest
 ];
 
