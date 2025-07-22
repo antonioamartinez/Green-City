@@ -1,4 +1,4 @@
-const serverName = "http://192.168.1.118:5000/"
+const serverName = "http://localhost:5000/"
 const infoDict = {
     "co2": `A healthy tree absorbs approx. <strong>10 kg</strong> (22 lbs) of CO₂ per year<sup>[1]</sup>.<br>
   <small><a href="https://onetreeplanted.org/blogs/stories/how-much-co2-does-tree-absorb?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer">
