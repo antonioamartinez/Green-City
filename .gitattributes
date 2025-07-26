@@ -1,0 +1,2 @@
+greencityEc2/geojson/* filter=lfs diff=lfs merge=lfs -text
+greencityEc2/static/js/deepforest10cmMerged.js filter=lfs diff=lfs merge=lfs -text
