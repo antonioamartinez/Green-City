@@ -14,7 +14,7 @@ app = Flask(__name__)  # "application" is needed for Elastic Beanstalk
 CORS(app)
 
 blocks = None
-geojson_dir = "GeoJSON:geojson"
+geojson_dir = "geojson"
 geojsonFiles = {
     "training": {"file": "Street_ROW_Trees.geojson","treeType": "pt", "model_output": None},
     "baseline": {"file": "merged_pasadena_2048_0.6m_baseline.geojson","treeType": "pt","model_output": None},
@@ -36,7 +36,7 @@ def load_blocks():
     global blocks
     path = os.path.join(geojson_dir, "2010_Census_Blocks.geojson")
     print(f"Loading blocks from {path} ...")
-    blocks = gpd.read_file(path)
+    blocks = gpd.read_file(path, engine="fiona")
     blocks["OBJECTID"] = blocks["OBJECTID"].astype(str).str.strip('"')
     blocks_proj = blocks.to_crs("EPSG:3857")
     blocks_proj["areaSqM"] = blocks_proj.geometry.area
@@ -44,7 +44,7 @@ def load_blocks():
 
 def process_model(file, model, tree_type, blocks, blocks_proj):
     print(f"Processing model '{model}' from file '{file}' (treeType={tree_type}) ...")
-    trees = gpd.read_file(os.path.join(geojson_dir, file))
+    trees = gpd.read_file(os.path.join(geojson_dir, file), engine="fiona")
     trees = trees.to_crs("EPSG:4326")
     if trees.crs != blocks.crs:
         trees = trees.to_crs(blocks.crs)
