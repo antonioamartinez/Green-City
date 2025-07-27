@@ -200,6 +200,14 @@ def get_density():
 def home():
     return render_template("index.html")
 
+@app.route('/client')
+def client():
+    return render_template('indexClient.html')
+
+@app.route('/srv')
+def srv():
+    return render_template('indexServer.html')
+
 if __name__ == "__main__":
     #app.run(debug=True)
     app.run(host="0.0.0.0", port=5000, debug=True)
