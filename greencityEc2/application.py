@@ -6,6 +6,10 @@ from pathlib import Path
 from flask_cors import CORS
 from shapely.geometry import shape
 
+print(os.getcwd())
+
+base_dir = os.getcwd()
+
 app = Flask(__name__)  # "application" is needed for Elastic Beanstalk
 CORS(app)
 
@@ -30,7 +34,7 @@ def sanitize_gdf(gdf):
 
 def load_blocks():
     global blocks
-    path = os.path.join(geojson_dir, "2010_Census_Blocks.geojson")
+    path = os.path.join(base_dir, geojson_dir, "2010_Census_Blocks.geojson")
     print(f"Loading blocks from {path} ...")
     blocks = gpd.read_file(path)
     blocks["OBJECTID"] = blocks["OBJECTID"].astype(str).str.strip('"')
@@ -40,7 +44,7 @@ def load_blocks():
 
 def process_model(file, model, tree_type, blocks, blocks_proj):
     print(f"Processing model '{model}' from file '{file}' (treeType={tree_type}) ...")
-    trees = gpd.read_file(os.path.join(geojson_dir, file))
+    trees = gpd.read_file(os.path.join(base_dir, geojson_dir, file))
     trees = trees.to_crs("EPSG:4326")
     if trees.crs != blocks.crs:
         trees = trees.to_crs(blocks.crs)
