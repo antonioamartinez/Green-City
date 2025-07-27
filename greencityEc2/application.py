@@ -14,7 +14,7 @@ app = Flask(__name__)  # "application" is needed for Elastic Beanstalk
 CORS(app)
 
 blocks = None
-geojson_dir = "geojson"
+geojson_dir = "http://www.carolsun.top/210/srv/geojson"
 geojsonFiles = {
     "training": {"file": "Street_ROW_Trees.geojson","treeType": "pt", "model_output": None},
     "baseline": {"file": "merged_pasadena_2048_0.6m_baseline.geojson","treeType": "pt","model_output": None},
