@@ -5,6 +5,7 @@ import geopandas as gpd
 from pathlib import Path
 from flask_cors import CORS
 from shapely.geometry import shape
+import requests
 
 print(os.getcwd())
 
@@ -14,11 +15,15 @@ app = Flask(__name__)  # "application" is needed for Elastic Beanstalk
 CORS(app)
 
 blocks = None
-geojson_dir = "http://www.carolsun.top/210/srv/geojson"
+geojson_dir = "http://www.carolsun.top/210/srv/geojson/"
+headers = {
+    "Accept": "application/json, text/plain, */*",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+}
 geojsonFiles = {
-    "training": {"file": "Street_ROW_Trees.geojson","treeType": "pt", "model_output": None},
-    "baseline": {"file": "merged_pasadena_2048_0.6m_baseline.geojson","treeType": "pt","model_output": None},
-    "deepforest": {"file": "predictions_4326_merged.geojson","treeType": "box","model_output": None}
+    "training": {"file": "Street_ROW_Trees.geojson","treeType": "pt", "crs": "4326", "model_output": None},
+    "baseline": {"file": "merged_pasadena_2048_0.6m_baseline.geojson","treeType": "pt","crs": "2229", "model_output": None},
+    "deepforest": {"file": "predictions_4326_merged.geojson","treeType": "box","crs": "4326", "model_output": None}
     #"deepforest": {"file": "deep_forest_init.geojson","treeType": "box","model_output": None},
     #"deepforest10cm": {"file": "pasadena_predictions_4326_10cm.geojson","treeType": "box","model_output": None},
     #"cv60cm": {"file": "merged_pasadena_60cm_cv.geojson","treeType": "pt","model_output": None},
@@ -34,20 +39,35 @@ def sanitize_gdf(gdf):
 
 def load_blocks():
     global blocks
-    path = os.path.join(geojson_dir, "2010_Census_Blocks.geojson")
-    print(f"Loading blocks from {path} ...")
-    blocks = gpd.read_file(path, engine="fiona")
+    #url = os.path.join(geojson_dir, "2010_Census_Blocks.geojson")
+    url = geojson_dir +"2010_Census_Blocks.geojson"
+    print(f"Loading blocks from {url} ...")
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    geojson = response.json()
+    geoms = [shape(feature["geometry"]) for feature in geojson["features"]]
+    props = [feature["properties"] for feature in geojson["features"]]
+    blocks = gpd.GeoDataFrame(props, geometry=geoms, crs="EPSG:4326")
+    #blocks = gpd.read_file(path, engine="fiona")
+
     blocks["OBJECTID"] = blocks["OBJECTID"].astype(str).str.strip('"')
     blocks_proj = blocks.to_crs("EPSG:3857")
     blocks_proj["areaSqM"] = blocks_proj.geometry.area
     return blocks, blocks_proj
 
-def process_model(file, model, tree_type, blocks, blocks_proj):
+def process_model(file, model, tree_type, blocks, blocks_proj, crs):
     print(f"Processing model '{model}' from file '{file}' (treeType={tree_type}) ...")
-    trees = gpd.read_file(os.path.join(geojson_dir, file), engine="fiona")
-    trees = trees.to_crs("EPSG:4326")
-    if trees.crs != blocks.crs:
-        trees = trees.to_crs(blocks.crs)
+    url = geojson_dir + file
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    geojson = response.json()
+    geoms = [shape(feature["geometry"]) for feature in geojson["features"]]
+    props = [feature["properties"] for feature in geojson["features"]]
+    trees = gpd.GeoDataFrame(props, geometry=geoms, crs=f"EPSG:{crs}")
+    #trees = gpd.read_file(os.path.join(geojson_dir, file), engine="fiona")
+    if str(crs) != "4326":
+        trees = trees.to_crs("EPSG:4326")
+        
     trees_proj = trees.to_crs("EPSG:3857")
 
     if tree_type == "pt":
@@ -72,7 +92,7 @@ def process_model(file, model, tree_type, blocks, blocks_proj):
 def load_and_cache_data():
     blocks, blocks_proj = load_blocks()
     for model, info in geojsonFiles.items():
-        result = process_model(info["file"], model, info["treeType"], blocks, blocks_proj)
+        result = process_model(info["file"], model, info["treeType"], blocks, blocks_proj, info["crs"])
         if result:
             geojsonFiles[model]["model_output"] = result
 
