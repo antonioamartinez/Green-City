@@ -1,4 +1,4 @@
-# ![GreenCity Banner](images/banner-greencity.png)
+# ![GreenCity Banner](https://github.com/user-attachments/assets/00728c5a-488f-46a6-98c2-6c11044e4baf)
 
 # 🌳 GreenCity
 
