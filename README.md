@@ -1,115 +1,198 @@
-🌳 GreenCity
-A Machine Learning Platform for Urban Tree Canopy Monitoring & Green Equity
+# ![GreenCity Banner](images/banner-greencity.png)
 
-✨ Overview: A Story of Data, Justice, and Leaves
-In many cities, access to trees is a luxury. Wealthier neighborhoods enjoy cool, green streets—while lower-income communities endure heat, pollution, and poor health outcomes.
+# 🌳 GreenCity
 
-Manual tree inspections are expensive and rare in underserved areas. But the need for data is urgent.
+**A Machine Learning Platform for Urban Tree Canopy Monitoring & Green Equity**
 
-That's where GreenCity steps in.
+<p align="center">
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="License">
+  </a>
+  <a href="https://github.com/antonioamartinez/Green-City/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/antonioamartinez/Green-City?style=flat-square&color=blueviolet" alt="Contributors">
+  </a>
+  <a href="https://github.com/antonioamartinez/Green-City/discussions">
+  <img src="https://img.shields.io/badge/chat-on%20discussions-ff69b4?style=flat-square" alt="Discussions">
+</a>
+<a href="https://github.com/antonioamartinez/Green-City/stargazers">
+  <img src="https://img.shields.io/github/stars/antonioamartinez/Green-City?style=flat-square&color=yellow" alt="Stars">
+</a>
+</p>
 
-Like a digital guardian, GreenCity utilizes satellite vision and machine learning to identify where shade grows—and where it doesn't. It maps trees, analyzes canopy, and makes environmental inequity visible.
+---
 
-With it, city planners, local advocates, and arborist groups can finally back up their instincts with real, block-by-block data.
+> “Cities can’t fix what they can’t see.”  
+> — *GreenCity team*
 
-🌱 Project Mission
-GreenCity empowers under-resourced cities and communities with:
+---
 
-An automated way to detect trees and estimate canopy coverage
+## 🚀 Overview
 
-A browser-based tool that visualizes tree presence and gaps
+![Equity Map Example](https://github.com/user-attachments/assets/e59be6cb-7cda-467e-8ad0-42f4568558f7)
 
-Metrics to support policy change, grant applications, and urban planning
+Urban tree canopy is not distributed equitably. In many cities, wealthier neighborhoods enjoy cool, green streets—while under-resourced communities endure heat, pollution, and greater health risks. The data gap is real: Most urban tree inventories are outdated, incomplete, or prohibitively expensive to maintain.
 
-We're not just counting trees—we're reclaiming green equity.
+**GreenCity** bridges this divide using cutting-edge machine learning and high-resolution aerial imagery. Our platform makes invisible tree canopy data *visible, measurable, and actionable*—empowering cities, advocates, and researchers to drive real environmental change.
 
-🛠️ What We've Built
-🌍 Aerial Intelligence
-Using satellite and aerial imagery from Google Earth Engine and ArcGIS archives, we process large-scale urban environments to detect canopy with machine learning.
+---
 
-🧠 Machine Learning Models
-🌳 Tree Point Prediction (VGG)
-Started with Pasadena's street tree dataset
+## 🌱 Mission
 
-Trained a VGG-based CNN for tree point detection
+GreenCity is dedicated to:
 
-Achieved 70% recall, improved to 75% after image enhancement
+- **Democratizing green data:** Delivering up-to-date, high-quality tree canopy information to all communities.
+- **Driving environmental justice:** Making inequity visible to inform policy, planning, and funding.
+- **Empowering local action:** Equipping cities, researchers, and grassroots advocates with tools to grow healthier, fairer urban forests.
 
-🍃 Crown Detection (DeepForest)
-Used DeepForest (RetinaNet) to detect canopy using bounding boxes
+---
 
-Initial attempts using 60cm imagery yielded unsatisfactory results due to resolution limitations.
+## 🛠️ Features
 
-Acquired 10cm aerial imagery from Los Angeles County ArcGIS archive
+### 💡 Intelligent Detection
 
-Achieved improved performance with hyper tuning, though overlapping trees posed challenges
+- **Automated tree and canopy detection** with deep learning
+- **Satellite & aerial imagery support** (Google Earth Engine, ArcGIS, more)
+- **Multi-resolution analysis** (60cm to 10cm aerials)
 
-Implemented a comprehensive image handling pipeline that supports map chip generation, cv-based image enhancement, and mosaic creation.
+### 🗺️ Interactive Mapping
 
-Merged overlapping crown predictions using Shapely geometry tools
+- **Browser-based explorer:** Visualize tree locations, canopy gaps, and environmental metrics
+- **Census block & street-level modes:** Analyze equity down to the block
+- **Live metrics:** Canopy coverage, carbon sequestration, heat island data
 
-🗺️ The Map Interface
-GreenCity's interactive browser-based application supports:
+### 📊 Reporting & Analysis
 
-🧭 Census Block Mode
-View canopy percentage, carbon absorption, and tree density per 100-acre block.
+- **Compare multiple ML models** side-by-side
+- **Flexible overlays:** Carbon, temperature, air quality (coming soon)
+- **Future-ready:** Downloadable reports & open data export
 
-🏙️ Streetview Roaming
-Navigate a street-level map with tree polygons overlaid in real-world locations.
+---
 
-📡 Live Metrics
-See estimated CO₂ sequestration, heat island implications, and coverage statistics.
+## 🔬 How It Works
 
-📝 Note: Downloadable reports are not yet available but are planned as a future feature.
+![Model Flow](images/model-flow.png)
 
-🔍 Experiments & Evaluation
-Component   Result
-Tree Point Detection (VGG)  75% recall (on enhanced 60cm imagery)
-Crown Detection (DeepForest)    Improved accuracy with 10cm imagery
-Image Resolution Impact 10cm necessary for accurate canopy work
-Streetview Usability (Survey): 92% found the interface intuitive and useful
+### Data Pipeline
 
-💡 What We Learned
-Tree detection is susceptible to image resolution—10cm or better is essential.
+1. **Acquire imagery:** Google Earth Engine, ArcGIS, and other sources.
+2. **Image filtering/enhancement:** Focused on sharpness, contrast, and urban density.
+3. **Tree detection (VGG-16):** Finds tree points; 81% recall, 4.47m avg. localization error.
+4. **Canopy detection (DeepForest):** RetinaNet-based crown detection, optimized for city clusters.
+5. **Postprocessing:** Merges overlapping crowns, shapes polygons, and prepares data for the web app.
 
-Urban environments are more challenging than forests: clustered trees and mixed species species can confuse models.
+### Key Results
 
-Bounding boxes alone aren't sufficient—polygon merging and shape reasoning are crucial.
+| Component             | Best Result                     |
+|-----------------------|---------------------------------|
+| Tree Point Detection  | 81% recall, 4.47m error         |
+| Crown Detection       | 88% recall (with enhancement)   |
+| Image Resolution      | 10cm/pixel imagery = best acc.  |
+| User Usability        | 92% found UI intuitive (survey) |
 
-Visual storytelling (not just raw data) is what moves people and policy.
+### Lessons Learned
 
-🔮 Future Improvements
-🌲 Tree species and health classification
+- **High-res imagery is essential** (10cm+ for urban canopy)
+- **City trees are harder:** Clusters, occlusions, and species mix confuse forest models
+- **Visual storytelling moves policy:** Maps reveal patterns that stats alone cannot
 
-🕒 Time-series tracking of canopy loss or growth
+---
 
-📱 Citizen-science tools for mobile validation
+## 🌍 Live Demo
 
-🔥 Integration with temperature and air quality overlays
+![Web App Screenshot](images/webapp-screenshot.png)
 
-📥 Downloadable data and report generation
+*Coming soon: Public demo deployment. Stay tuned!*
 
-🧑‍🔬 Expert-validated datasets per city for model calibration
+---
 
-⚙️ Tech Stack
-Machine Learning: PyTorch, VGG, DeepForest (RetinaNet)
+## 🔮 Roadmap
 
-Geospatial Tools: GDAL, Rasterio, Shapely, GeoPandas
+- 🌲 Tree species & health classification
+- 🕒 Time-series tracking (canopy loss/gain)
+- 📱 Citizen science validation (mobile)
+- 🔥 Overlays: temperature, air quality
+- 📥 Data & report downloads
+- 🧑‍🔬 Expert calibration per city
 
-Frontend Mapping: Leaflet.js, Mapbox GL
+---
 
-Imagery Sources: Google Earth Engine, ArcGIS, OpenStreetMap
+## ⚙️ Tech Stack
 
-🤝 Who It's For
-🌆 City Governments looking to prioritize equitable green infrastructure
+- **Machine Learning:** PyTorch, VGG-16, DeepForest (RetinaNet)
+- **Geospatial:** GDAL, Rasterio, Shapely, GeoPandas
+- **Frontend:** Leaflet.js, Mapbox GL, Bootstrap
+- **Imagery:** Google Earth Engine, ArcGIS, OpenStreetMap
 
-🌳 Urban Forestry Groups Seeking Canopy Gap Visibility
+---
 
-🗣️ Community Advocates fighting environmental injustice
+## 📦 Installation
 
-📊 Researchers in urban ecology and climate adaptation
+> **Requirements:** Python 3.10+, Node.js (for frontend), pip, git
 
-🧭 Conclusion: The GreenCity Vision
-GreenCity turns pixels into policy. It uses AI not just to map trees—but to reveal patterns of neglect, resilience, and opportunity. In a warming world, shade is survival—and data is power.
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/antonioamartinez/Green-City
+   cd greencity
+   ```
 
-We started with Pasadena. But the future is every city that wants to grow fairly, intelligently, and green.
+2. **Install backend dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Install frontend dependencies:**
+   ```bash
+   cd frontend
+   npm install
+   npm run build
+   ```
+
+4. **Run the server:**
+   ```bash
+   # From project root
+   python app.py
+   # Or your server start command
+   ```
+
+5. **Access the app:**  
+   Open your browser to `http://localhost:8000`
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions!  
+Whether you’re a developer, data scientist, urban ecologist, or passionate resident—your input matters.
+
+- Check [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
+- Open issues or propose features
+- Join discussions—help us shape the future of urban green equity!
+
+---
+
+## 👩‍🔬 Citation & Acknowledgements
+
+GreenCity is developed by [Fengchen Liu](#), [Antonio Martinez](#), [Richard Oldham](#), and [Ming-hwei Carol Sun](#).  
+Inspired by open data from the City of Pasadena and aerial imagery from open sources.
+
+**Cite this project:**
+```
+Liu, F., Martinez, A., Oldham, R., Sun, M.-C. (2024). GreenCity: Urban Tree Canopy Monitor. https://github.com/antonioamartinez/Green-City
+```
+
+---
+
+## 📄 License
+
+[MIT License](LICENSE)
+
+---
+
+## 🌟 Vision
+
+**GreenCity turns pixels into policy.**  
+Our mission: Make urban tree canopy data accessible, accurate, and equitable for every city. In a warming world, *shade is survival—and data is power.*
+
+---
+
+**Grow with us—[star this repo](../../stargazers), [join the community](../../discussions), and help every city become greener, healthier, and more just.**
