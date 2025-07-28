@@ -97,7 +97,7 @@ Place the weights in the appropriate directory (e.g., `./weights/pretrained_rgb`
 ## Pretrained Model Evaluation
 Our pretrained model achieves:
 - Best Recall: 81% (at 12m threshold)
-- Best Average Distance to Closest Predicted Tree: 4.5 meters
+- Best Average Distance to Closest Predicted Tree: 4.8 meters
 
 - Visualization: [Average Recall vs. Threshold Plot](viz/average_recall_threshold_plot.png)
   - ![image](viz/average_recall_threshold_plot.png)
