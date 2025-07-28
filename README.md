@@ -95,7 +95,7 @@ GreenCity is dedicated to:
 
 ## 🌍 Live Demo
 
-![Web App Screenshot]([https://imgur.com/a/fXUjVfB](https://media.discordapp.net/attachments/455410977199095833/1399291193518460990/TeaserPreview.png?ex=688876fa&is=6887257a&hm=8ead795a170c8a72762041c7148e1006aa843c3db8ed47c44085b13b23a6230a&=&format=webp&quality=lossless&width=2403&height=1194))
+[![Webpage Preview](https://i.postimg.cc/jdMk7w4G/Teaser-Preview.png)](https://postimg.cc/nCQk8L5k)
 
 *Coming soon: Public demo deployment. Stay tuned!*
 
