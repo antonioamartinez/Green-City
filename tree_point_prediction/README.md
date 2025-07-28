@@ -42,7 +42,7 @@ docker pull fengchenucb/greencity-tree-location
 ```
 
 ## Apptainer Image
-For HPC environments (e.g., Lawrencium cluster), we provide an Apptainer definition file.
+For HPC environments (e.g., Savio cluster), we provide an Apptainer definition file.
 
 - [Apptainer.def](DockerImage/Apptainer.def)
 - [README for Apptainer](DockerImage/README_Apptainer.md)
