@@ -1,0 +1,12 @@
+Bootstrap: docker
+From: nvcr.io/nvidia/tensorflow:24.02-tf2-py3
+
+%post
+    apt-get update && apt-get install -y gdal-bin libgdal-dev
+    pip install imageio rasterio geopandas h5py scipy tqdm scikit-image scikit-learn optuna matplotlib
+    mkdir -p /workspace
+    cd /workspace
+    git clone https://github.com/fengchenUCB/greencity-tree-location.git
+
+%environment
+    export PYTHONPATH=/workspace/greencity-tree-location:$PYTHONPATH

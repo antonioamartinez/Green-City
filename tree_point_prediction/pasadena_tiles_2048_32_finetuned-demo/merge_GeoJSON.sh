@@ -1,0 +1,1 @@
+ogrmerge.py -single -o merged_pasadena.json -f GeoJSON -nln merged_pasadena output/*.json
