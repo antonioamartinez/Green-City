@@ -1,7 +1,5 @@
 # ![GreenCity Banner](https://github.com/user-attachments/assets/00728c5a-488f-46a6-98c2-6c11044e4baf)
 
-# 🌳 GreenCity
-
 **A Machine Learning Platform for Urban Tree Canopy Monitoring & Green Equity**
 
 <p align="center">
@@ -99,7 +97,7 @@ GreenCity is dedicated to:
 
 ## 🌍 Live Demo
 
-![Web App Screenshot](images/webapp-screenshot.png)
+![Web App Screenshot](https://imgur.com/a/fXUjVfB)
 
 *Coming soon: Public demo deployment. Stay tuned!*
 
