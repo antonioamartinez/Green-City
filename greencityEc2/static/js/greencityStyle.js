@@ -34,10 +34,20 @@ const sectionHTML = {
                 <li><a class="dropdown-item" href="#project3">Web Application</a></li>
             </ul>
         </li>
-        <li class="nav-item"><a class="nav-link" href="#project">Project</a></li>
+
         <li class="nav-item"><a class="nav-link" href="#app">App</a></li>
-        <li class="nav-item"><a class="nav-link" href="#evaluation">Evaluation</a></li>
-        <li class="nav-item"><a class="nav-link" href="#signup">Contact</a></li>
+        
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            Evaluation
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#evaluation">Evaluation</a></li>
+                <li><a class="dropdown-item" href="#impact">Key Learnings & Impact</a></li>
+            </ul>
+        </li>
+        
+        <li class="nav-item"><a class="nav-link" href="#signup">Contributors</a></li>
     </ul>
 `,
 "about": `
@@ -168,7 +178,7 @@ const sectionHTML = {
         <span class="section-text">
         <table style="text-valign:top;">
             <tr>
-                <td style="vertical-align: top; width:60vw; ">
+                <td style="vertical-align: top; width:40vw; ">
                 
                     <div style="font-size:1em;  padding:10px; ">                
                         Our project, GreenCity, aims to close this data gap—making tree canopy data visible, measurable, and actionable for every city, regardless of size or budget. Our mission is to empower communities to plan greener, healthier, and more resilient neighborhoods.
@@ -177,7 +187,7 @@ const sectionHTML = {
 
                         </div>
                     
-                    <div style="padding:20px; width:60vw;">
+                    <div style="padding:20px; width:40vw;">
                         <div class="section-title">Data Science Approach</div>
                         <br>
                         <ol>
@@ -200,6 +210,17 @@ const sectionHTML = {
                             </li>
                         </ol>
                     </div>
+                </td>
+                <td  style="vertical-align:top;"><img src="${baseURL}/static/assets/img/pic6.png" style="width: 40vw;">
+                    <br>
+                    <div class="borderbox">
+                    <ul>
+                    <li>Filtered images with 5 key quality metrics</li>
+                    <li>Enhanced only images needing improvement(contrast, sharpness, etc)</li>
+                    <li>Result: Model train only on best quality data for accurate tree and canopy detection.</li>
+                    </ul>
+                    </div>
+                    
                 </td>
             </tr>
         </table>
@@ -226,7 +247,7 @@ const sectionHTML = {
                                         <strong>Input:</strong> Multispectral imagery (RGB channels), processed as 256x256 tiles for training and 2048x2048 for inference.
                                     </li>
                                     <li>
-                                        <strong>Output:</strong> Confidence maps downsampled by 32×, indicating tree likelihood. Peak-finding turned these maps into tree point locations.
+                                        <strong>Output:</strong> Confidence maps downsampled by 32x, indicating tree likelihood. Peak-finding turned these maps into tree point locations.
                                     </li>
                                     <li>
                                         <strong>Architecture:</strong> Modified VGG-16 with 21 layers and ~17 million trainable parameters.
@@ -236,7 +257,7 @@ const sectionHTML = {
                                     </li>
                                 </ul>
                             </li>
-                            <br>
+                            <br><br><br>
                             <li>
                                 <strong>DeepForest (RetinaNet with ResNet-50 backbone):</strong>
                                 <ul>
@@ -268,12 +289,29 @@ const sectionHTML = {
                                     </li>
                                 </ul>
                             </li>
+                            
+                            
                         </ul>
                     </div>
                 </td>
-                <td  style="vertical-align:top;"><img src="${baseURL}/static/assets/img/pic4.png" style="width: 25vw;">
-                    <br>
+                <td  style="vertical-align:top; text-align:center;">
+                    <img src="${baseURL}/static/assets/img/pic7.png" style="width: 40vw;"><br>
                     
+                            <img src="${baseURL}/static/assets/img/pic4.png" style="width: 35vw; padding:20px">
+                            <br>
+
+                    <br><br><br><br>
+                    <img src="${baseURL}/static/assets/img/pic8.png" style="width: 40vw;"><br><br>
+                    
+                            <img src="${baseURL}/static/assets/img/pic9.png" style="width: 40vw; padding:20px">
+                    <br><table style="font-size: 0.9em; padding:5px; text-align:center;">
+                            <tr>
+                                <td style="padding:5px;">Released model 60cm imagery</td>
+                                <td style="padding:5px;">Released model 10 cm per pixel</td>
+                                <td style="padding:5px;">Custom Trained 60cm</td>
+                                <td style="padding:5px;">Custom Trained 60cm (Optimized Tiles)</td>
+                            </tr></table>
+
                 </td>
             </tr>
             
@@ -291,12 +329,12 @@ const sectionHTML = {
         <span class="section-text">
         <table style="text-valign:top;">
             <tr>
-                <td style="vertical-align: top; width:60vw; ">
+                <td style="vertical-align: top; width:45vw; ">
                 
                     <div style="font-size:1em;  padding:10px; ">      
                         
                         <li>
-                            Interactive web tool (using Leaflet, Bootstrap, OpenStreetMap) where users can:
+                            Interactive web tool where users can:
                             <ul>
                                 <li>
                                     Compare different model results (tree points, canopy polygons).
@@ -314,17 +352,36 @@ const sectionHTML = {
                         </li>
                         
                     </div>
+                    Web App Architecture & Flow Chart<br>
+                    <img src="${baseURL}/static/assets/img/pic10.png" style="width: 45vw;">
                 </td>
-                <td  style="vertical-align:top;"><img src="${baseURL}/static/assets/img/pic4.png" style="width: 25vw;">
-                    <br>
+                <td  style="vertical-align:top;">
+                    <div style="vertical-align:top; width:35vw; padding: 20px; border:1px solid;">
+                    Tools and Platform:
+                    <ul >
+                    <li style="padding: 10px;">
+                        <strong>Leaflet</strong> - A lightweight open-source JavaScript library for interactive maps.  
+                        <br><em>Chosen for its simplicity and flexibility in rendering geospatial data directly in the browser, perfect for integrating with custom map layers and user interactions.</em>
+                    </li>
+                    <li style="padding: 10px;">
+                        <strong>OpenStreetMap</strong> - A free, editable map of the world built by a community of mappers.  
+                        <br><em>Used as the base tile layer for maps in Leaflet, offering an open, community-driven alternative to Google Maps without API quotas or fees.</em>
+                    </li>
+                    <li style="padding: 10px;">
+                        <strong>AWS</strong> - Amazon Web Services provides scalable cloud infrastructure.  
+                        <br><em>Chosen to host the Flask server and support backend services with reliable uptime, scalability, and integration with tools like EC2, S3, and Route 53.</em>
+                    </li>
+                    <li style="padding: 10px;">
+                        <strong>Bootstrap</strong> - A responsive front-end CSS framework.  
+                        <br> <em>Used for layout and UI consistency across devices, enabling rapid development of responsive, mobile-friendly pages with minimal custom styling.</em>
+                    </li>
+                    </ul>
+                    </div>
                     
                 </td>
             </tr>
             <tr><td colspan="2"><div style="font-size: 0.7em;">
-                <ul><li>City of Pasadena Open Tree Inventory Data (2023). https://data.cityofpasadena.net</li>
-                    <li>International Society of Arboriculture. (2002). Tree Inventories: A Guide for Urban Forest Managers. Arboricultural Update. https://auf.isa-arbor.com/content/14/2/36</li>
-                    <li>Portland Parks & Recreation. (2020). CIP Tree Inventory Manual. https://www.portland.gov/sites/default/files/2020/cip-tree-inventory-user-manual.pdf</li>
-                </ul>
+                
                 </div>
                 </td>
             </tr>
@@ -332,66 +389,256 @@ const sectionHTML = {
     </span>
 
     </div>
-  `,
+  `
+  ,
   "evaluation":
   `
     <div class="verticleLine"></div><script>getBlock("15%", "calc(100vh * 6.8)")</script>
     <p class="pageTitle">Evaluation</p>
     <div class="section-block" >
-        <span class="section-title" style="margin-left:100px; font-size:1.5em; ">Experiment Summary Table — What We Tried and Learned</span>
+        <span class="section-title" style=" font-size:1.5em; ">Experiment Summary Table — What We Tried and Learned</span>
     <span class="section-text">
-        
-        <table>
-            <tr><td colspan="2" style="text-align: center;">
-                <table border="1" cellspacing="0" cellpadding="6" style="border: 1px solid rgb(255, 255, 255); background-color:rgba(0, 0, 0, 0.5); ">
+        <table width="100%">
+            <tr>
+            <td colspan="2" >
+                <table style="border-collapse: collapse; width: 100%;">
                 <thead>
                     <tr>
-                    <th>Experiment</th>
-                    <th>Imagery</th>
-                    <th>Weights Used</th>
-                    <th>Detection recall within 12 meters</th>
-                    <th>Notes</th>
+                    <th class="tableCell">Experiment</th>
+                    <th class="tableCell">Imagery</th>
+                    <th class="tableCell">Recall</th>
+                    <th class="tableCell">Takeaway</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                    <td>1. Released model on 60cm imagery</td>
-                    <td>60cm (2024)</td>
-                    <td>DeepForest v1.5.2</td>
-                    <td>94.02%</td>
-                    <td>Boxes were oversized inflating coverage by over predicting.</td>
+                    <td class="tableCell">1. Released Model</td>
+                    <td class="tableCell">60cm (2024)</td>
+                    <td class="tableCell">94.02%</td>
+                    <td class="tableCell">Overestimated Canopy</td>
                     </tr>
                     <tr>
-                    <td>2. Released model on 10cm imagery</td>
-                    <td>10cm (2014)</td>
-                    <td>DeepForest v1.5.2</td>
-                    <td>93.22%</td>
-                    <td>Better, but outdated imagery.</td>
+                    <td class="tableCell">2. Released Model</td>
+                    <td class="tableCell">10cm (2014)</td>
+                    <td class="tableCell">93.22%</td>
+                    <td class="tableCell">Outdated imagery</td>
                     </tr>
                     <tr>
-                    <td>3. Custom-trained on 60cm</td>
-                    <td>60cm (2024)</td>
-                    <td>Trained from scratch</td>
-                    <td>80.56%</td>
-                    <td>More consistent with ground truth</td>
+                    <td class="tableCell">3. Custom-trained</td>
+                    <td class="tableCell">60cm (2024)</td>
+                    <td class="tableCell">80.56%</td>
+                    <td class="tableCell">Best Match to Ground</td>
                     </tr>
                     <tr>
-                    <td>4. CV-enhanced imagery (trained)</td>
-                    <td>60cm (2024)</td>
-                    <td>Retrained & tuned</td>
-                    <td>88.70%</td>
-                    <td>Best so far — enhanced contrast & tuning</td>
+                    <td class="tableCell">4. CV-enhanced</td>
+                    <td class="tableCell">60cm (2024)</td>
+                    <td class="tableCell">88.70%</td>
+                    <td class="tableCell">Most accurate Results</td>
+                    </tr>
+                    <tr>
+                    <td class="tableCell">5. Optimal Parameter</td>
+                    <td class="tableCell">60cm (2024)</td>
+                    <td class="tableCell">93.31%</td>
+                    <td class="tableCell">Best Overall</td>
                     </tr>
                 </tbody>
                 </table>
-
-            </td></tr>
+            </td>
+            </tr>
+            <tr>
+            <td style="padding:5px; width:50vw;">
+                <ul style="padding:5px;">
+                <li style="padding:5px;">
+                    <strong>Tree Location Detection (VGG-16):</strong>
+                    <ul>
+                        <li>
+                            <strong>Recall:</strong> 81% within 12 meters of ground truth locations (using KDTree matching).
+                        </li>
+                        <li>
+                            <strong>Localization:</strong> 4.8m average distance to closest true tree.
+                        </li>
+                        <li>
+                            <strong>Metrics:</strong> Chosen for their focus on completeness (recall) and spatial accuracy (distance), crucial for environmental planning and resource allocation.
+                        </li>
+                    </ul>
+                </li>
+                <li style="padding:5px;">
+                    <strong>Canopy Detection (DeepForest):</strong>
+                    <ul>
+                        <li>
+                            <strong>Best Recall:</strong> Up to 88.7% on enhanced 60cm imagery (using intersection with ground truth within a 12m threshold).
+                        </li>
+                        <li>
+                            <strong>Experiment Insights:</strong>
+                            <ul>
+                                <li>
+                                    Released models on lower-resolution or outdated imagery inflated recall with oversized, imprecise boxes.
+                                </li>
+                                <li>
+                                    Custom training and targeted enhancements improved both precision and recall, aligning model output with true 2024 canopy data.
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li style="padding:5px;">
+                    <strong>Evaluation Methods:</strong>
+                    <ul>
+                        <li>
+                            Cross-model comparisons.
+                        </li>
+                        <li>
+                            Manual annotation of large trees (future step for even better crown size awareness).
+                        </li>
+                        <li>
+                            Five CV-based metrics tracked improvements not just visually, but statistically, after each enhancement.
+                        </li>
+                    </ul>
+                </li>
+                </ul>
+            </td>
+            <td style="vertical-align:top; padding:20px;">
+                    <img src="${baseURL}/static/assets/img/pic11.png" style="width: 30vw;"></td>
+            </tr>
             
         </table>
     </span>
 
     </div>
   `
+
+  ,
+  "impact":
+  `
+    <div class="verticleLine"></div><script>getBlock("15%", "calc(100vh * 6.8)")</script>
+    <p class="pageTitle">Key Learnings & Impact</p>
+    <div class="section-block" >
+    <span class="section-text">
+        <table width="100%">
+            <tr>
+            <td style="padding:5px; width:50vw;">
+                <ul>
+                <li style="padding:5px;">
+                    <strong>Data Quality is Everything:</strong> Automated metrics for contrast, sharpness, and edge density allowed us to focus enhancement efforts, leading to measurable improvements in detection (not just “looking better,” but performing better).
+                </li>
+                <li style="padding:5px;">
+                    <strong>Hyperparameter Tuning Makes a Difference:</strong>
+                    <ul>
+                        <li>
+                            Smaller patch sizes (600–800px) and 25% overlap prevented rural overfitting and improved crown delineation in dense city environments.
+                        </li>
+                        <li>
+                            Lowered score thresholds (0.45–0.50) retained larger crowns and avoided missing significant trees.
+                        </li>
+                        <li>
+                            NMS (Non-Maximum Suppression) set at IoU 0.5 prevented loss of multi-branch or irregularly shaped crowns.
+                        </li>
+                    </ul>
+                </li>
+                <li style="padding:5px;">
+                    <strong>Bridging the Data Gap Enables Equity:</strong>
+                    <ul>
+                        <li>
+                            Our approach provides accessible, up-to-date tree data—allowing cities, planners, GIS teams, and advocates to target greening investments, track canopy goals, and support grant applications.
+                        </li>
+                        <li>
+                            Making data visible, measurable, and actionable is critical for climate resilience, public health, and advancing climate justice.
+                        </li>
+                    </ul>
+                </li>
+                <li style="padding:5px;">
+                    <strong>User-Driven Development:</strong>
+                    <ul>
+                        <li>
+                            The GreenCity tool is already designed for—and with—urban forestry planners, sustainability officers, GIS analysts, and community groups in mind.
+                        </li>
+                        <li>
+                            Our MVP lets users see, compare, and analyze canopy cover at multiple scales and with different models, supporting real-world decision making.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            </td>
+            <td style="vertical-align:top; padding:20px;">
+                    <img src="${baseURL}/static/assets/img/pic13.png" style="width: 30vw;"></td>
+            </tr>
+            
+        </table>
+    </span>
+
+    </div>
+  `
+   ,
+  "signup":
+  `
+    <div class="section-block" >
+    <span class="section-text">
+        <table width="100%">
+            <tr>
+            <td style="width:40vw; padding:10px;">
+                <h2>
+                Acknowledgements
+                </h2>
+            <ul>
+                <li>
+                    <a href="https://data.cityofpasadena.net/" target="_blank">City of Pasadena Open Data (tree inventory, aerial imagery)</a>
+                </li>
+                <li>
+                    <a href="https://www.americanforests.org/article/american-forests-launches-nationwide-tree-equity-scores/" target="_blank">American Forests (Tree Equity Score, Methodology and Summary)</a>
+                </li>
+                <li>
+                    <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0248529" target="_blank">McDonald, R. I. et al., PLOS ONE, 2021 – The value of US urban tree cover for reducing heat-related health impacts and electricity consumption</a>
+                </li>
+                <li>
+                    <a href="https://www.sciencedirect.com/science/article/abs/pii/S1618866714000413" target="_blank">Nowak, D. J., Greenfield, E. J., Hoehn, R. E., &amp; Lapoint, E. (2013). Urban forest structure, ecosystem services and change in seven US cities. Urban Forestry &amp; Urban Greening, 14(2), 126–135.</a>
+                </li>
+                <li>
+                    <a href="https://clf.org/blog/the-truth-about-tree-equity/" target="_blank">Conservation Law Foundation: The Truth About Tree Equity</a>
+                </li>
+                <li>
+                    <a href="https://time.com/6996432/trees-heat-waves-essay/" target="_blank">Time Magazine (2024): Shade Is Survival</a>
+                </li>
+                <li>
+                    <a href="https://auf.isa-arbor.com/content/14/2/36" target="_blank">International Society of Arboriculture: Tree Inventories – A Guide for Urban Forest Managers (2002)</a>
+                </li>
+                <li>
+                    <a href="https://www.portland.gov/parks/trees/tree-inventory" target="_blank">Portland Parks &amp; Recreation: Tree Inventory Manual (2020)</a>
+                </li>
+                <li>
+                    <a href="https://deepforest.readthedocs.io/en/latest/" target="_blank">DeepForest open-source contributors</a>
+                </li>
+                <li>
+                    <a href="https://earthengine.google.com/" target="_blank">Google Earth Engine</a>
+                </li>
+                <li>
+                    <a href="https://github.com/JonathanVentura/urban-tree-detection" target="_blank">Jonathan Ventura Urban Tree Detection Project &amp; Data</a>
+                </li>
+                <li>
+                    <a href="https://research-it.berkeley.edu/services-projects/high-performance-computing-savio" target="_blank">UCB HPC cluster (Savio)</a>
+                </li>
+                <li>
+                    Project instructors: <a href="https://www.ischool.berkeley.edu/people/fred-nugen" target="_blank">Fred Nugen</a> and <a href="https://www.ischool.berkeley.edu/people/korin-reid" target="_blank">Korin Reid</a>
+                </li>
+            </ul>
+            </td>
+            <td style="vertical-align:top; width:50vw; padding:10px;">
+                    <h2>MIDS Capstone Project Summer 2025<br></h2>
+                    <div class="borderbox" style="width:35vw;">
+                    <h5>Team members:</h5>
+                    <div class="field__item"><a href="/people/fengchen-liu">Fengchen Liu</a> - Machine Learning Engineer</div>
+                    <div class="field__item"><a href="/people/antonio-martinez">Antonio Martinez</a> - Project Manager</div>
+                    <div class="field__item"><a href="/people/richard-oldham">Richard Oldham</a> - Infrastructure and Data Engineer</div>
+                    <div class="field__item"><a href="/people/minghwei-sun">Minghwei Sun</a> - MVP Application Developer</div>
+                    </div>
+            </td>
+            </tr>
+            
+        </table>
+    </span>
+
+    </div>
+  `
+  
 }
 
 function loadContent(){
@@ -413,11 +660,11 @@ function createCircles(){
     const sectionWidth = section.offsetWidth;
     const sectionHeight = section.offsetHeight;
 
-    const sizes = [0.2, 0.8, 0.4, 0.3, 0.4, 0.3]; // 50%, 25%, 10%
-    const hightPos = [0.04, 3.1, 2.2, 3.7, 3, 2.7];
-    const widthPos = [0.01, 0.02, 0.5, 1, 0.6, 0.05];
-    const numCircles = 6;
-    const sections = 6;
+    const sizes = [0.2, 0.5, 0.4, 0.3, 0.4, 0.3, 0.5, 0.3]; // 50%, 25%, 10%
+    const hightPos = [0.2, 0.1, 1.5, 1.8, 2.1, 2.8, 3.7, 4.5];
+    const widthPos = [0.05, 0.3, 0.4, 0.3, 0.45, 0.2, 0.4, 0.2];
+    const numCircles = 8;
+    const sections = 8;
 
     for (let i = 0; i < numCircles; i++) {
         const sizeFactor = sizes[i];

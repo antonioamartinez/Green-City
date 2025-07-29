@@ -196,7 +196,7 @@ const modelData = {
         color: "#fa1d6eff",
         size: 3,
         layer: null,
-        label: "Tree Points (VGG 16)",
+        label: "Tree Points",
         tooltip: "Model iniciated with VGG16."
     },
 
@@ -208,7 +208,7 @@ const modelData = {
         size: 3,
         color: "#4842f5",
         layer: null,
-        label: "Street Trees",
+        label: "Public Tree Inventory",
         tooltip: "Training dataset with labeled street trees provided by Pasadena city."
     },
 
@@ -219,7 +219,7 @@ const modelData = {
         size: 3,
         color: "#59fff1",
         layer: null,
-        label: "Deep Forest Merged",
+        label: "Canopy Detection",
         tooltip: "Detected trees using deepForest Detecting model merging overlapped boxes on 10cm/pixel images"
     }
 
