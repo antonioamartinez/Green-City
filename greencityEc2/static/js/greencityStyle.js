@@ -498,7 +498,9 @@ const sectionHTML = {
                 </ul>
             </td>
             <td style="vertical-align:top; padding:20px;">
-                    <img src="${baseURL}/static/assets/img/pic11.png" style="width: 30vw;"></td>
+                <img src="${baseURL}/static/assets/img/pic14.png" style="width: 30vw;"><br><br>
+                    <img src="${baseURL}/static/assets/img/pic15.png" style="width: 30vw;">
+            </td>
             </tr>
             
         </table>
