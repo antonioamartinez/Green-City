@@ -1,6 +1,6 @@
 #map {
     
-    height: calc(100vh - 35px);
+    height: calc(100vh - 70px);
     z-index : 999;
 }
 
@@ -93,7 +93,7 @@
 
 #legend {
   position: absolute;
-  bottom: 20px;
+  bottom: 30px;
   right: 10px;
   background: white;
   padding: 10px;
