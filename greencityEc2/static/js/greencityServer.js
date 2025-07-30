@@ -196,7 +196,7 @@ const modelData = {
         color: "#fa1d6eff",
         size: 3,
         layer: null,
-        label: "Tree Points",
+        label: "Detected Tree Points",
         tooltip: "Model iniciated with VGG16 Fully Convolutional Network. Foundational for detecting tree locations to support further canopy analysis. "
     },
 
