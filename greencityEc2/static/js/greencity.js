@@ -198,7 +198,7 @@ const modelData = {
         size: 3,
         layer: null,
         label: "Tree Points",
-        tooltip: "Model iniciated with VGG16."
+        tooltip: "Model iniciated with VGG16 Fully Convolutional Network. Foundational for detecting tree locations to support further canopy analysis. "
     },
     "training": {
         densityMap: null,
@@ -208,7 +208,7 @@ const modelData = {
         color: "#4842f5",
         layer: null,
         label: "Public Tree Inventory",
-        tooltip: "Training dataset with labeled street trees provided by Pasadena city."
+        tooltip: "Training dataset with labeled street trees provided by the city of Pasadena. This data is the limited, public-facing data set of the City's public tree inventory"
     },
 
         /*
