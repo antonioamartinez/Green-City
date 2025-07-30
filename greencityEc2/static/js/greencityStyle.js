@@ -625,10 +625,10 @@ const sectionHTML = {
                     <h2>MIDS Capstone Project Summer 2025<br></h2>
                     <div class="borderbox" style="width:35vw;">
                     <h5>Team members:</h5>
-                    <div class="field__item"><a href="/people/fengchen-liu">Fengchen Liu</a> - Machine Learning Engineer</div>
-                    <div class="field__item"><a href="/people/antonio-martinez">Antonio Martinez</a> - Project Manager</div>
-                    <div class="field__item"><a href="/people/richard-oldham">Richard Oldham</a> - Infrastructure and Data Engineer</div>
-                    <div class="field__item"><a href="/people/minghwei-sun">Minghwei Sun</a> - MVP Application Developer</div>
+                    <div class="field__item"><a href="https://www.ischool.berkeley.edu/people/fengchen-liu">Fengchen Liu</a> - Machine Learning Engineer</div>
+                    <div class="field__item"><a href="https://www.ischool.berkeley.edu/people/antonio-martinez">Antonio Martinez</a> - Project Manager</div>
+                    <div class="field__item"><a href="https://www.ischool.berkeley.edu/people/richard-oldham">Richard Oldham</a> - Infrastructure and Data Engineer</div>
+                    <div class="field__item"><a href="https://www.ischool.berkeley.edu/people/minghwei-sun">Minghwei Sun</a> - MVP Application Developer</div>
                     </div>
             </td>
             </tr>
