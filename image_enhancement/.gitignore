@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Jupyter notebook artifacts
+.ipynb_checkpoints/
+
+# System files (Windows)
+Thumbs.db
+desktop.ini
+
+# Python virtual environments (if local)
+.env/
+.venv/
+
+# PyCharm IDE files
+.idea/
+*.iml
+
+# Optional: VS Code settings (if any)
+.vscode/
+
+# Optional: ignore generated outputs
+# sample_outputs/*.png
+# sample_outputs/*.csv
+# sample_outputs/*.json
+
+# Security keys
+*.key
+*.pem
