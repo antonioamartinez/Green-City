@@ -10,9 +10,19 @@ This is an interactive web tool where users can:
 
 ---
 
+### 📁 Project Structure
+
+- **`/srv/`** — Server-side code  
+  Contains the Flask application, API endpoints, data processing scripts, and configuration for serving geospatial data and handling user requests.
+
+- **`/client/`** — Client-side pages and static assets  
+  Contains HTML, JavaScript, and CSS files responsible for rendering the interactive map UI, visualizations, and user interactions in the browser.
+
+---
+
 ### 🧭 Web App Architecture & Flow
 
-![Web App Architecture](greencityEc2/static/assets/img/pic10.png)
+![Web App Architecture](/greencityEc2/static/assets/img/pic10.png)
 
 ---
 
