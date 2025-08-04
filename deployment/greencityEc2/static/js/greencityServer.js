@@ -7,7 +7,7 @@ const infoDict = {
   </a></small>`,
     "pm2": `An average urban tree removes ~<strong>0.015 kg</strong> of PM₂.₅/year.  
   One hectare of canopy removes ~<strong>67 kg</strong>/year.<br>
-  <a href="https://www.nrs.fs.fed.us/pubs/47323" target="_blank" rel="noopener noreferrer">
+  <a href="https://www.itreetools.org/documents/560/i-Tree_Canopy_Air_Pollutant_Removal_and_Monetary_Value_Model_Descriptions.pdf" target="_blank" rel="noopener noreferrer">
     [Nowak et al. 2014]
   </a>`, 
     "kgHa": `1 hectare of healthy canopy removes ~<strong>4.7 kg</strong> of PM₂.₅/year  
@@ -131,7 +131,7 @@ function updateInfoBox(feature, selectedPoints, numModel) {
     One hectare of U.S.
     urban tree cover averages about 67 kg of pollution removal per year (Nowak
     et al. 2014)
-
+https://www.itreetools.org/documents/560/i-Tree_Canopy_Air_Pollutant_Removal_and_Monetary_Value_Model_Descriptions.pdf
 
     1 hectare of healthy tree canopy can remove ≈ 4.7 kg of PM2.5 per year
     (source: i-Tree Eco model, US Forest Service)
