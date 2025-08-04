@@ -22,7 +22,7 @@ This is an interactive web tool where users can:
 
 ### 🧭 Web App Architecture & Flow
 
-![Web App Architecture](/greencityEc2/static/assets/img/pic10.png)
+![Web App Architecture](./greencityEc2/static/assets/img/pic10.png)
 
 ---
 
