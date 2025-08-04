@@ -254,7 +254,7 @@ const modelData = {
         color: "#59fff1",
         layer: null,
         label: "Canopy Detection",
-        tooltip: "Detected trees using deepForest Detecting model merging overlapped boxes on 10cm/pixel images"
+        tooltip: "Detected trees using deepForest Detecting model merging overlapped boxes on 60cm/pixel images"
     }
 };
 
