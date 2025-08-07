@@ -1183,4 +1183,17 @@ function processLoadingDoc(){
             
 }
 
+window.addEventListener("load", function () {
+  const hash = window.location.hash;
+  if (hash) {
+    // Delay scroll slightly to ensure everything is rendered
+    setTimeout(() => {
+      const target = document.querySelector(hash);
+      if (target) {
+        target.scrollIntoView({ behavior: "auto", block: "start" });
+      }
+    }, 100); // You can tweak the delay
+  }
+});
+
 
