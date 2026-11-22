@@ -74,14 +74,17 @@ GreenCity is dedicated to:
 2. **Image filtering/enhancement:** Focused on sharpness, contrast, and urban density.
 3. **Tree detection (VGG-16):** Finds tree points; 81% recall, 4.47m avg. localization error.
 4. **Canopy detection (DeepForest):** RetinaNet-based crown detection, optimized for city clusters.
-5. **Postprocessing:** Merges overlapping crowns, shapes polygons, and prepares data for the web app.
+5. **Canopy cover segmentation (U-Net):** Pixel-level canopy masks on 60 cm imagery, trained on labels made from USGS 3DEP lidar. See [canopy_detection](canopy_detection/README.md#canopy-cover-segmentation-60-cm-imagery).
+6. **Postprocessing:** Merges overlapping crowns, shapes polygons, and prepares data for the web app.
 
 ### Key Results
 
 | Component             | Best Result                     |
 |-----------------------|---------------------------------|
 | Tree Point Detection  | 81% recall, 4.47m error         |
+| Tree Point Detection (retuned threshold) | F1 0.641 on the test split (precision 0.650, recall 0.631) |
 | Crown Detection       | 88% recall (with enhancement)   |
+| Canopy Cover (U-Net, 60 cm) | F1 0.67, 3.8 pp cover error vs lidar on 65 test tiles (DeepForest boxes: F1 0.12) |
 | Image Resolution      | 10cm/pixel imagery = best acc.  |
 | User Usability        | 92% found UI intuitive (survey) |
 
@@ -114,44 +117,41 @@ GreenCity is dedicated to:
 
 ## ⚙️ Tech Stack
 
-- **Machine Learning:** PyTorch, VGG-16, DeepForest (RetinaNet)
+- **Machine Learning:** PyTorch, VGG-16, DeepForest (RetinaNet), U-Net
 - **Geospatial:** GDAL, Rasterio, Shapely, GeoPandas
 - **Frontend:** Leaflet.js, Mapbox GL, Bootstrap
 - **Imagery:** Google Earth Engine, ArcGIS, OpenStreetMap
+- **Lidar:** USGS 3DEP point clouds (Entwine Point Tiles on AWS), laspy
 
 ---
 
 ## 📦 Installation
 
-> **Requirements:** Python 3.10+, Node.js (for frontend), pip, git
+> **Requirements:** Python 3.10+, pip, git
+
+Each component installs and runs on its own.
 
 1. **Clone the repo:**
    ```bash
    git clone https://github.com/antonioamartinez/Green-City
-   cd greencity
+   cd Green-City
    ```
 
-2. **Install backend dependencies:**
+2. **Canopy detection and canopy cover (DeepForest, U-Net):**
    ```bash
+   pip install -r canopy_detection/requirements.txt
+   ```
+   Commands for each step are in [canopy_detection/README.md](canopy_detection/README.md).
+
+3. **Tree point detection (VGG-16):** run it in the Docker or Apptainer image described in [tree_point_prediction/README.md](tree_point_prediction/README.md).
+
+4. **Web app (Flask + Leaflet):**
+   ```bash
+   cd deployment/greencityEc2
    pip install -r requirements.txt
+   python application.py
    ```
-
-3. **Install frontend dependencies:**
-   ```bash
-   cd frontend
-   npm install
-   npm run build
-   ```
-
-4. **Run the server:**
-   ```bash
-   # From project root
-   python app.py
-   # Or your server start command
-   ```
-
-5. **Access the app:**  
-   Open your browser to `http://localhost:8000`
+   Open `http://localhost:5000`. Set `FLASK_DEBUG=1` to turn on the debugger.
 
 ---
 
@@ -160,8 +160,8 @@ GreenCity is dedicated to:
 We welcome contributions!  
 Whether you’re a developer, data scientist, urban ecologist, or passionate resident—your input matters.
 
-- Check [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 - Open issues or propose features
+- Send a pull request with a short before/after of what it changes
 - Join discussions—help us shape the future of urban green equity!
 
 ---

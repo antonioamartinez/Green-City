@@ -28,6 +28,7 @@ Optimized for research, city planning, and environmental monitoring.
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Pipeline Workflow](#pipeline-workflow)
+- [Canopy Cover Segmentation (60 cm imagery)](#canopy-cover-segmentation-60-cm-imagery)
 - [Script Details](#script-details)
 - [Example Data](#example-data)
 - [Docker Usage](#docker-usage)
