@@ -16,6 +16,7 @@ def main():
     parser.add_argument('log', help='path to log directory')
     parser.add_argument('--ntrials', type=int, default=200, help='number of trials')
     parser.add_argument('--max_distance', type=float, default=10, help='max distance from gt to pred tree (in pixels)')
+    parser.add_argument('--seed', type=int, default=0, help='random seed for the Optuna sampler')
 
     args = parser.parse_args()
 
@@ -42,22 +43,31 @@ def main():
         
         np.save(preds_path,preds)
 
+    # search absolute thresholds only over the range the model actually outputs;
+    # a fixed [-10, 10] range wastes almost every 'abs' trial on useless values
+    max_pred = float(preds.max())
+
     def objective(trial):
         min_distance = trial.suggest_int('min_distance',1,10)
         mode = trial.suggest_categorical('mode',['abs','rel'])
-        threshold_abs = trial.suggest_float('threshold_abs',-10,10)
-        threshold_rel = trial.suggest_float('threshold_rel',0,1)
+        # only sample the threshold the chosen mode uses, so TPE models each mode separately
+        if mode == 'abs':
+            threshold_abs = trial.suggest_float('threshold_abs',0,max_pred)
+            threshold_rel = None
+        else:
+            threshold_abs = None
+            threshold_rel = trial.suggest_float('threshold_rel',0,1)
         results = evaluate(
             gts=gts,
             preds=preds,
             min_distance=min_distance,
-            threshold_rel=threshold_rel if mode=='rel' else None,
-            threshold_abs=threshold_abs if mode=='abs' else None,
+            threshold_rel=threshold_rel,
+            threshold_abs=threshold_abs,
             max_distance=args.max_distance)
         return 1 - results['fscore']
 
     print('----- running hyperparameter tuning -----')
-    study = optuna.create_study()
+    study = optuna.create_study(sampler=optuna.samplers.TPESampler(seed=args.seed))
     study.optimize(objective, n_trials=args.ntrials)
 
     print('----- best params: -----')

@@ -10,6 +10,7 @@ from utils.preprocess import *
 
 import argparse
 import os
+import shutil
 import sys
 
 import h5py as h5
@@ -89,7 +90,7 @@ def main():
             save_weights_only=True,
             ))
     tensorboard_path = os.path.join(args.log,'tensorboard')
-    os.system("rm -rf " + tensorboard_path)
+    shutil.rmtree(tensorboard_path, ignore_errors=True)
     callbacks.append(tf.keras.callbacks.TensorBoard(tensorboard_path))
 
     gen = generator(f,args.batch_size)

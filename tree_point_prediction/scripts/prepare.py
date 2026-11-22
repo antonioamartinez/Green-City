@@ -92,7 +92,7 @@ train_data,val_data,test_data = [load_data(args.dataset,names,args.sigma) for na
 
 def add_data_to_h5(f,data,split,augment=False):
     if len(data)==0: return
-    names = np.array([d['image'] for d in data])
+    names = np.array([d['name'] for d in data],dtype='S')
     images = np.stack([d['image'] for d in data],axis=0)
     gt = np.stack([d['gt'] for d in data],axis=0)
     confidence = np.stack([d['confidence'] for d in data],axis=0)
