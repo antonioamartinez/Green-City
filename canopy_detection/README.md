@@ -135,6 +135,62 @@ python 07_merge_polygons.py   runs/run_<timestamp>/predictions.geojson   merged_
 
 ---
 
+## Canopy Cover Segmentation (60 cm imagery)
+
+For canopy cover on 60 cm (NAIP-like) imagery, use the U-Net in `canopy_unet.py`
+instead of DeepForest boxes. It labels every pixel as canopy or not, so it maps
+crown shape instead of rectangles, and it is trained on airborne lidar rather
+than hand-drawn boxes.
+
+**Results** on 65 held-out tiles in Pasadena, Long Beach and Santa Monica,
+scored against canopy from 2023 USGS lidar (thresholds picked on 75 separate
+validation tiles):
+
+| Method | Precision | Recall | F1 | IoU | Canopy cover error |
+|---|---|---|---|---|---|
+| DeepForest boxes, `pasadena_finetuned.pth`, tiles upsampled 6x | 0.21 | 0.08 | 0.12 | 0.06 | 10.5 pp |
+| Greenness threshold (ExG) | 0.42 | 0.64 | 0.51 | 0.34 | 11.0 pp |
+| **Canopy U-Net (`canopy_unet.pt`)** | **0.63** | **0.71** | **0.67** | **0.50** | **3.8 pp** |
+
+By city, the U-Net scores F1 0.75 in Pasadena, 0.62 in Long Beach and 0.58 in
+Santa Monica. Canopy cover error is the mean absolute difference in per-tile
+canopy %. The DeepForest weights in this folder predict boxes with a median width of about 1.5 m,
+far smaller than real crowns, so their unioned boxes miss most canopy.
+
+**How the labels are made** (`08_lidar_canopy_labels.py`): a pixel is canopy
+when lidar returns reach 3 m or more above ground there and most of the nearby
+returns come from pulses that split into several returns (leaves do this, roofs
+do not). Large single-return areas are treated as roofs and removed. The lidar
+is read directly from the public USGS 3DEP copies on AWS, so any US city with
+3DEP coverage can make its own training and test labels.
+
+**Limits:** the imagery is 2016 to 2020 and the lidar is 2023, so trees planted
+or removed in between count as errors for every method. Dark artificial turf
+and some dark pavement can still be marked as canopy. Shrubs under 3 m are not
+canopy by this definition.
+
+```bash
+# 1. canopy labels from lidar for your tiles (needs laspy[lazrs])
+python 08_lidar_canopy_labels.py --tile_dir tiles --out_dir canopy_labels --ept CA_LosAngeles_1_B23
+
+# 2. train (the shipped canopy_unet.pt used canopy_splits/train.txt and val.txt, 40 epochs)
+python 09_train_canopy_unet.py --tile_dir tiles --label_dir canopy_labels \
+    --train_list canopy_splits/train.txt --val_list canopy_splits/val.txt --out canopy_unet.pt
+
+# 3. map canopy: per-tile masks, canopy_polygons.geojson and canopy_cover.csv
+python 10_predict_canopy_unet.py --weights canopy_unet.pt --tile_dir tiles --out_dir canopy_run
+
+# 4. score against reference masks
+python 11_evaluate_canopy_masks.py --pred_dir canopy_run/masks --ref_dir canopy_labels \
+    --list canopy_splits/test.txt
+```
+
+The tiles in `canopy_splits` are the 256 x 256 tiles in
+`../tree_point_prediction/pasadena_data_256_RGB_train_backup/images`. Prediction
+runs on CPU at about 0.4 s per 256 x 256 tile with 4-way rotation averaging.
+
+---
+
 ## Script Details
 
 | Script | Purpose |
@@ -147,6 +203,10 @@ python 07_merge_polygons.py   runs/run_<timestamp>/predictions.geojson   merged_
 | `05_evaluate_distance.py` | Evaluate model coverage and accuracy (distance/overlap) |
 | `06_coverage_tuning.py` | Automated grid search for best model hyperparameters |
 | `07_merge_polygons.py` | Merge overlapping detection boxes to polygons |
+| `08_lidar_canopy_labels.py` | Canopy masks from USGS 3DEP lidar, for training and testing |
+| `09_train_canopy_unet.py` | Train the canopy U-Net on tiles and canopy masks |
+| `10_predict_canopy_unet.py` | Canopy masks, polygons and cover % for a tile folder |
+| `11_evaluate_canopy_masks.py` | Precision, recall, F1, IoU and cover error against reference masks |
 
 ---
 
