@@ -38,7 +38,8 @@ def evaluate_bbox_overlap(gt: gpd.GeoDataFrame, pred: gpd.GeoDataFrame) -> pd.Da
         cand = list(gidx.intersection(prow.geometry.bounds))
         hit = False
         for gi in cand:
-            if gi in matched:
+            # the spatial index only compares bounding boxes, so check real overlap
+            if gi in matched or not gt.geometry.iloc[gi].intersects(prow.geometry):
                 continue
             # first unmatched candidate ⇒ true positive
             matched.add(gi)

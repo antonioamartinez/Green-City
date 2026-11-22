@@ -33,7 +33,7 @@ def run_fold_eval(tmp_dir, gt_path, args, weights_flag):
     # 1) Predict
     pred_cmd = [
         "python",
-        "03_predict_tile_folder.py",
+        "04_predict_tile_folder.py",
         "--tile_dir",
         tmp_dir,
         "--patch_size",
@@ -57,7 +57,7 @@ def run_fold_eval(tmp_dir, gt_path, args, weights_flag):
     out_csv = os.path.join(tmp_dir, "metrics.csv")
     eval_cmd = [
         "python",
-        "06_evaluate_distance.py",
+        "05_evaluate_distance.py",
         "--gt_geojson",
         gt_path,
         "--pred_geojson",
