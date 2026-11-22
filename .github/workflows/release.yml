@@ -1,0 +1,70 @@
+# Publish a GitHub release.
+#
+# Run it from the Actions tab ("Release" > "Run workflow"): give the tag
+# (e.g. v1.1.0) and, optionally, the number of a pull request whose body has a
+# "Release notes" line followed by a bullet list. Those bullets become the
+# release notes; without a pull request, GitHub writes notes from the merged
+# pull requests since the last tag. The tag is created on the target branch if
+# it does not exist yet.
+#
+# Pushing a v* tag yourself also publishes a release, with GitHub's notes.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release, e.g. v1.1.0"
+        required: true
+      notes_pr:
+        description: "Pull request number to copy release notes from (optional)"
+        required: false
+      target:
+        description: "Branch to tag"
+        required: false
+        default: main
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ inputs.tag || github.ref_name }}
+      NOTES_PR: ${{ inputs.notes_pr }}
+      TARGET: ${{ inputs.target || 'main' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the tag
+        run: |
+          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::tag must look like v1.2.3, got '$TAG'"; exit 1
+          fi
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "::error::release $TAG already exists"; exit 1
+          fi
+
+      - name: Collect notes
+        run: |
+          if [ -n "$NOTES_PR" ]; then
+            if ! [[ "$NOTES_PR" =~ ^[0-9]+$ ]]; then
+              echo "::error::notes_pr must be a number"; exit 1
+            fi
+            gh pr view "$NOTES_PR" --json body --jq .body \
+              | python3 .github/scripts/release_notes.py > notes.md
+            printf '\n\nNotes from #%s.\n' "$NOTES_PR" >> notes.md
+            echo "NOTES_ARGS=--notes-file notes.md" >> "$GITHUB_ENV"
+          else
+            echo "NOTES_ARGS=--generate-notes" >> "$GITHUB_ENV"
+          fi
+
+      - name: Publish
+        run: |
+          gh release create "$TAG" --title "$TAG" --target "$TARGET" $NOTES_ARGS
