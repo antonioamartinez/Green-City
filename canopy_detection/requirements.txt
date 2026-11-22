@@ -91,6 +91,8 @@ jupyterlab==4.4.3
 jupyterlab_pygments==0.3.0
 jupyterlab_server==2.27.3
 kiwisolver==1.4.8
+laspy==2.7.0
+lazrs==0.8.2
 lazy_loader==0.4
 lightning-utilities==0.14.3
 llvmlite==0.44.0
