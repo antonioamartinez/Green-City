@@ -161,6 +161,9 @@ def main() -> None:
     # Override thresholds and detection cap
     model.config["nms_thresh"] = args.nms_thresh
     model.config["retinanet"]["score_thresh"] = args.score_thresh
+    # DeepForest copies score_thresh into the RetinaNet only when it builds the
+    # model, so the config change above alone is ignored at inference time
+    model.model.score_thresh = args.score_thresh
     model.model.detections_per_img = args.max_detections
 
     model.eval()

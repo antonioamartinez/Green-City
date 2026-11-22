@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Convert predictions_bboxes.geojson → DeepForest CSV
-(image_path,xmin,ymin,xmax,ymax,label), with normalized + clamped boxes.
+(image_path,xmin,ymin,xmax,ymax,label), with pixel boxes clamped to each tile.
 """
 
 import argparse
@@ -14,7 +14,7 @@ import numpy as np
 
 def main():
     p = argparse.ArgumentParser(
-        description="GeoJSON bboxes → DeepForest annotations CSV, normalized and clamped"
+        description="GeoJSON bboxes → DeepForest annotations CSV, in pixels and clamped"
     )
     p.add_argument(
         "--geojson", required=True, help="Path to predictions_bboxes.geojson"
@@ -48,50 +48,44 @@ def main():
             )
 
     records = []
-    # 3) For each polygon, find its tile, compute pixel bbox, normalize, clamp
+    # 3) For each polygon, find its tile and convert its own bounds to pixel coords
     for geom in gdf.geometry:
         cx, cy = geom.centroid.coords[0]
+        gminx, gminy, gmaxx, gmaxy = geom.bounds
         # find which tile contains the centroid
         for tile in tiles:
             minx, miny, maxx, maxy = tile["bounds"]
             if minx <= cx <= maxx and miny <= cy <= maxy:
                 t = tile["transform"]
-                # four corners in pixel space
+                # four corners of the polygon's bbox in pixel space
                 corners = [
-                    (~t) * (minx, miny),
-                    (~t) * (minx, maxy),
-                    (~t) * (maxx, miny),
-                    (~t) * (maxx, maxy),
+                    (~t) * (gminx, gminy),
+                    (~t) * (gminx, gmaxy),
+                    (~t) * (gmaxx, gminy),
+                    (~t) * (gmaxx, gmaxy),
                 ]
                 xs = [c for c, r in corners]
                 ys = [r for c, r in corners]
-                xmin_px, xmax_px = min(xs), max(xs)
-                ymin_px, ymax_px = min(ys), max(ys)
 
-                # Normalize
+                # DeepForest expects pixel coordinates (pascal_voc), clamped to the tile
                 w, h = tile["width"], tile["height"]
-                xmin_n = xmin_px / w
-                ymin_n = ymin_px / h
-                xmax_n = xmax_px / w
-                ymax_n = ymax_px / h
-
-                # Clamp to [0,1]
-                xmin_n = float(np.clip(xmin_n, 0.0, 1.0))
-                ymin_n = float(np.clip(ymin_n, 0.0, 1.0))
-                xmax_n = float(np.clip(xmax_n, 0.0, 1.0))
-                ymax_n = float(np.clip(ymax_n, 0.0, 1.0))
+                xmin_px = float(np.clip(min(xs), 0, w))
+                xmax_px = float(np.clip(max(xs), 0, w))
+                ymin_px = float(np.clip(min(ys), 0, h))
+                ymax_px = float(np.clip(max(ys), 0, h))
 
                 # Skip degenerate or empty boxes
-                if xmax_n <= xmin_n or ymax_n <= ymin_n:
+                if xmax_px <= xmin_px or ymax_px <= ymin_px:
                     break  # drop this polygon entirely
 
                 records.append(
                     {
-                        "image_path": tile["path"],
-                        "xmin": xmin_n,
-                        "ymin": ymin_n,
-                        "xmax": xmax_n,
-                        "ymax": ymax_n,
+                        # relative to --tile_dir, which is passed as root_dir when training
+                        "image_path": pathlib.Path(tile["path"]).name,
+                        "xmin": xmin_px,
+                        "ymin": ymin_px,
+                        "xmax": xmax_px,
+                        "ymax": ymax_px,
                         "label": args.label,
                     }
                 )
