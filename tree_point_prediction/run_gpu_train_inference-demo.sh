@@ -15,7 +15,7 @@ mkdir ./pasadena_train${k}_weights
 rm -rf ./pasadena_train_hdf5/dataset${k}.h5
 
 cd ./pasadena_data_256_RGB_train_backup/
-python dataset_preprocess.py --seed_m {k} --threshold 55
+python dataset_preprocess.py --seed_m ${k} --threshold 55
 
 cd /workspace/data/greencity-tree-location
 python -m scripts.prepare ./pasadena_data_256_RGB_train_backup ./pasadena_train_hdf5/dataset${k}.h5 --bands RGB
